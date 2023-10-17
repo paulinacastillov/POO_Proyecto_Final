@@ -280,27 +280,29 @@ class Inventario:
     for linea in tabla_TreeView:
         self.treeProductos.delete(linea) # Límpia la filas del TreeView
     
-    # Seleccionando los datos de la BD
-    # query = '''SELECT * from Proveedor INNER JOIN Inventario WHERE idNitProv = idNit ORDER BY idNitProv'''
-    # db_rows = self.run_Query(query) # db_rows contine la vista del query
+    #Seleccionando los datos de la BD
+    query = '''SELECT * from Proveedor INNER JOIN Inventario WHERE idNitProv = idNit ORDER BY idNitProv'''
+    db_rows = self.run_Query(query) # db_rows contine la vista del query
       
-    # # Insertando los datos de la BD en treeProductos de la pantalla
-    # for row in db_rows:
-    #   self.treeProductos.insert('',0, text = row[0], values = [row[4],row[5],row[6],row[7],row[8],row[9]])
+    # Insertando los datos de la BD en treeProductos de la pantalla
+    for row in db_rows:
+      self.treeProductos.insert('',0, text = row[0], values = [row[4],row[5],row[6],row[7],row[8],row[9]])
 
     ''' Al final del for row queda con la última tupla
         y se usan para cargar las variables de captura
     '''
-    # self.idNit.insert(0,row[0])
-    # self.razonSocial.insert(0,row[1])
-    # self.ciudad.insert(0,row[2])
-    # self.codigo.insert(0,row[4])
-    # self.descripcion.insert(0,row[5])
-    # self.unidad.insert(0,row[6])
-    # self.cantidad.insert(0,row[7])
-    # self.precio.insert(0,row[8])
-    # self.fecha.insert(0,row[9])  
+    self.idNit.insert(0,row[0])
+    self.razonSocial.insert(0,row[1])
+    self.ciudad.insert(0,row[2])
+    self.codigo.insert(0,row[4])
+    self.descripcion.insert(0,row[5])
+    self.unidad.insert(0,row[6])
+    self.cantidad.insert(0,row[7])
+    self.precio.insert(0,row[8])
+    self.fecha.insert(0,row[9])  
           
+# hola
+  # Crear Código que haga estas caracteristicas
   def adiciona_Registro(self, event=None):
     '''Adiciona un producto a la BD si la validación es True'''
     pass
