@@ -282,7 +282,7 @@ class Inventario:
         self.treeProductos.delete(linea) # Límpia la filas del TreeView
     
     #Seleccionando los datos de la BD
-    query = '''SELECT * from Proveedor INNER JOIN Inventario WHERE idNitProv = idNit ORDER BY idNitProv'''
+    query = '''SELECT * from Proveedores INNER JOIN Productos WHERE idNitProv = idNit ORDER BY idNitProv'''
     db_rows = self.run_Query(query) # db_rows contine la vista del query
       
     # Insertando los datos de la BD en treeProductos de la pantalla
