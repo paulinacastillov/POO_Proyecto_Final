@@ -172,6 +172,7 @@ class Inventario:
     self.treeProductos.heading("Fecha",       anchor="center", text='Fecha')
 
     #Carga los datos en treeProductos
+    # Comentada para no mostrar los datos iniciales
     self.lee_treeProductos() 
     self.treeProductos.place(anchor="nw", height=560, width=790, x=2, y=230)
 
@@ -228,9 +229,10 @@ class Inventario:
   ''' ......... Métodos utilitarios del sistema .............'''
   #Rutina de centrado de pantalla
   def centra(self,win,ancho,alto): 
+      fraccion_pantalla = 8
       """ centra las ventanas en la pantalla """ 
-      x = win.winfo_screenwidth() // 2 - ancho // 2 
-      y = win.winfo_screenheight() // 2 - alto // 2 
+      x = win.winfo_screenwidth() // fraccion_pantalla  - ancho // fraccion_pantalla 
+      y = win.winfo_screenheight() // fraccion_pantalla - alto // fraccion_pantalla
       win.geometry(f'{ancho}x{alto}+{x}+{y}') 
       win.deiconify() # Se usa para restaurar la ventana
 
