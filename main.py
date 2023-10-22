@@ -1,6 +1,6 @@
 # !/usr/bin/python3
 # -*- coding: utf-8 -*-
-#owo
+#awa
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import messagebox as mssg
@@ -12,14 +12,23 @@ class Inventario:
   def __init__(self, master=None):
 
     self.path = os.path.abspath('')#r'X:/Users/ferna/Documents/UNal/Alumnos/2023_S2/ProyInventario'
-    self.db_name = self.path + r'/Inventario.db' # Toca conseguir una base de datos
-    ancho=830;alto=840 # Dimensione de la pantalla
+    self.db_name = self.path + r'bases_de_datos/Inventario.db' # Toca conseguir una base de datos
+    
+
+    # Dimensiones de la pantalla
+    # root = tk.Tk()
+    # ancho=root.winfo_screenwidth()
+    # alto=root.winfo_screenheight() 
+    # root.destroy()
+    ancho=700
+    alto=800
+
     actualiza = None
 
     # Crea ventana principal
     self.win = tk.Tk() 
-    self.win.geometry(f"{ancho}x{alto}")
-    self.win.iconbitmap("dt.ico")
+    self.win.geometry(f"{int(ancho/30)}x{int(alto/30)}")
+    self.win.iconbitmap(self.path + r'/imagenes/dt.ico')
     self.win.resizable(False, False)
     self.win.title("Manejo de Proveedores") 
 
@@ -31,7 +40,7 @@ class Inventario:
     self.win.configure(background="#e0e0e0",font="{Arial} 12 {bold}",
                        height=ancho,labelanchor="n",width=alto)
     self.tabs = ttk.Notebook(self.win)
-    self.tabs.configure(height=800, width=799)
+    self.tabs.configure(height=700, width=799)
 
     #Frame de datos
     self.frm1 = ttk.Frame(self.tabs)
@@ -172,8 +181,8 @@ class Inventario:
     self.treeProductos.heading("Fecha",       anchor="center", text='Fecha')
 
     #Carga los datos en treeProductos
-    # Comentada para no mostrar los datos iniciales
-    self.lee_treeProductos() 
+    # Comentada para no mostrar los datos iniciales, esto los muestra
+    # self.lee_treeProductos() 
     self.treeProductos.place(anchor="nw", height=560, width=790, x=2, y=230)
 
     #Scrollbar en el eje Y de treeProductos
@@ -193,7 +202,7 @@ class Inventario:
     #Botón para Buscar un Proveedor
     self.btnBuscar = ttk.Button(self.frm2)
     self.btnBuscar.configure(text='Buscar')
-    self.btnBuscar.place(anchor="nw", width=70, x=200, y=10)
+    self.btnBuscar.place(anchor="nw", width=70, x=200, y=100)
 
     #Botón para Guardar los datos
     self.btnGrabar = ttk.Button(self.frm2)
@@ -229,7 +238,7 @@ class Inventario:
   ''' ......... Métodos utilitarios del sistema .............'''
   #Rutina de centrado de pantalla
   def centra(self,win,ancho,alto): 
-      fraccion_pantalla = 8
+      fraccion_pantalla = 2
       """ centra las ventanas en la pantalla """ 
       x = win.winfo_screenwidth() // fraccion_pantalla  - ancho // fraccion_pantalla 
       y = win.winfo_screenheight() // fraccion_pantalla - alto // fraccion_pantalla
