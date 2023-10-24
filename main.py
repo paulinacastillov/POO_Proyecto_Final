@@ -12,7 +12,7 @@ class Inventario:
   def __init__(self, master=None):
 
     self.path = os.path.abspath('')#r'X:/Users/ferna/Documents/UNal/Alumnos/2023_S2/ProyInventario'
-    self.db_name = self.path + r'bases_de_datos/Inventario.db' # Toca conseguir una base de datos
+    self.db_name = self.path + r'/bases_de_datos/Inventario.db' # Toca conseguir una base de datos
     
 
     # Dimensiones de la pantalla
@@ -202,7 +202,7 @@ class Inventario:
 
     #Botón para Buscar un Proveedor
     self.btnBuscar = ttk.Button(self.frm2)
-    self.btnBuscar.configure(text='Buscar')
+    self.btnBuscar.configure(text='Buscar', command=self.consultarDB)
     self.btnBuscar.pack(side="bottom")
     self.btnBuscar.place(anchor="nw", width=70, x=140, y=10)
 
@@ -214,13 +214,13 @@ class Inventario:
 
     # Botón para Editar los datos
     self.btnEditar = ttk.Button(self.frm2)
-    self.btnEditar.configure(text='Editar')
+    self.btnEditar.configure(text='Editar', command= self.editaTreeProveedores)
     self.btnEditar.pack(side="bottom")
     self.btnEditar.place(anchor="nw", width=70, x=280, y=10)
 
     # Botón para Eliminar datos
     self.btnEliminar = ttk.Button(self.frm2)
-    self.btnEliminar.configure(text='Eliminar')
+    self.btnEliminar.configure(text='Eliminar', command = self.eliminaRegistro)
     self.btnEliminar.pack(side="bottom")
     self.btnEliminar.place(anchor="nw", width=70, x=350, y=10)
 
@@ -292,7 +292,7 @@ class Inventario:
         conn.commit()
     return result
 
-  def lee_treeProductos(self):
+  def lee_treeProductos(self,query,op):
     tabla_TreeView = self.treeProductos.get_children()
     for linea in tabla_TreeView:
         self.treeProductos.delete(linea) # Límpia la filas del TreeView
@@ -343,8 +343,7 @@ class Inventario:
    #  query = '''SELECT * FROM Proveedores WHERE idNitProv = ?'''
    #  self.run_Query(query,[self.idNit.get()])
     self.lee_treeProductos(self.query, self.op)
-    slef.lim
-    self.idNit.delete(0,'end') 
+    self.limpiaCampos()
     
    #  self.carga_Datos()
   pass
