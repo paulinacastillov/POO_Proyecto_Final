@@ -1,6 +1,6 @@
 # !/usr/bin/python3
 # -*- coding: utf-8 -*-
-#owo
+#awa
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import messagebox as mssg
@@ -12,14 +12,23 @@ class Inventario:
   def __init__(self, master=None):
 
     self.path = os.path.abspath('')#r'X:/Users/ferna/Documents/UNal/Alumnos/2023_S2/ProyInventario'
-    self.db_name = self.path + r'/Inventario.db' # Toca conseguir una base de datos
-    ancho=830;alto=840 # Dimensione de la pantalla
+    self.db_name = self.path + r'bases_de_datos/Inventario.db' # Toca conseguir una base de datos
+    
+
+    # Dimensiones de la pantalla
+    # root = tk.Tk()
+    # ancho=root.winfo_screenwidth()
+    # alto=root.winfo_screenheight() 
+    # root.destroy()
+    ancho=700
+    alto=800
+
     actualiza = None
 
     # Crea ventana principal
     self.win = tk.Tk() 
-    self.win.geometry(f"{ancho}x{alto}")
-    self.win.iconbitmap("dt.ico")
+    self.win.geometry(f"{int(ancho/30)}x{int(alto/30)}")
+    self.win.iconbitmap(self.path + r'/imagenes/dt.ico')
     self.win.resizable(False, False)
     self.win.title("Manejo de Proveedores") 
 
@@ -31,7 +40,7 @@ class Inventario:
     self.win.configure(background="#e0e0e0",font="{Arial} 12 {bold}",
                        height=ancho,labelanchor="n",width=alto)
     self.tabs = ttk.Notebook(self.win)
-    self.tabs.configure(height=800, width=799)
+    self.tabs.configure(height=700, width=799)
 
     #Frame de datos
     self.frm1 = ttk.Frame(self.tabs)
@@ -172,8 +181,8 @@ class Inventario:
     self.treeProductos.heading("Fecha",       anchor="center", text='Fecha')
 
     #Carga los datos en treeProductos
-    # Comentada para no mostrar los datos iniciales
-    self.lee_treeProductos() 
+    # Comentada para no mostrar los datos iniciales, esto los muestra
+    # self.lee_treeProductos() 
     self.treeProductos.place(anchor="nw", height=560, width=790, x=2, y=230)
 
     #Scrollbar en el eje Y de treeProductos
@@ -188,37 +197,36 @@ class Inventario:
 
     #Frame 2 para contener los botones
     self.frm2 = ttk.Frame(self.win)
-    self.frm2.configure(height=60, width=800)
-   
+    self.frm2.configure(height=100, width=800)
 
     #Botón para Buscar un Proveedor
     self.btnBuscar = ttk.Button(self.frm2)
-    self.btnBuscar.configure(text='Buscar', command=self.consultarDB)
-    self.btnBuscar.pack(side="left", padx=10, fill="x", expand=True)
+    self.btnBuscar.configure(text='Buscar')
+    self.btnBuscar.place(anchor="nw", width=70, x=200, y=100)
 
-    # Botón para Guardar los datos
+    #Botón para Guardar los datos
     self.btnGrabar = ttk.Button(self.frm2)
-    self.btnGrabar.configure(text='Grabar', command=self.adiciona_Registro)
-    self.btnGrabar.pack(side="left", padx=10, fill="x", expand=True)
+    self.btnGrabar.configure(text='Grabar')
+    self.btnGrabar.place(anchor="nw", width=70, x=275, y=10)
 
-    # Botón para Editar los datos
+    #Botón para Editar los datos
     self.btnEditar = ttk.Button(self.frm2)
-    self.btnEditar.configure(text='Editar', command=self.editaTreeProveedores)
-    self.btnEditar.pack(side="left", padx=10, fill="x", expand=True)
+    self.btnEditar.configure(text='Editar')
+    self.btnEditar.place(anchor="nw", width=70, x=350, y=10)
 
-    # Botón para Eliminar datos
+    #Botón para Elimnar datos
     self.btnEliminar = ttk.Button(self.frm2)
-    self.btnEliminar.configure(text='Eliminar', command=self.eliminaRegistro)
-    self.btnEliminar.pack(side="left", padx=10, fill="x", expand=True)
+    self.btnEliminar.configure(text='Eliminar')
+    self.btnEliminar.place(anchor="nw", width=70, x=425, y=10)
 
-    # Botón para cancelar una operación
+    #Botón para cancelar una operación
     self.btnCancelar = ttk.Button(self.frm2)
-    self.btnCancelar.configure(text='Cancelar', command=self.limpiaCampos)
-    self.btnCancelar.pack(side="left", padx=10, fill="x", expand=True)
+    self.btnCancelar.configure(text='Cancelar', width=80,command = self.limpiaCampos)
+    self.btnCancelar.place(anchor="nw", width=70, x=500, y=10)
 
     #Ubicación del Frame 2
-    self.frm2.place(anchor="nw", height=60, relwidth=1, y=680)
-    self.win.pack(anchor="center",side="top")
+    self.frm2.place(anchor="nw", height=60, relwidth=1, y=755)
+    self.win.pack(anchor="center", side="top")
 
     # widget Principal del sistema
     self.mainwindow = self.win
@@ -227,12 +235,10 @@ class Inventario:
   def run(self):
       self.mainwindow.mainloop()
 
-
-
   ''' ......... Métodos utilitarios del sistema .............'''
   #Rutina de centrado de pantalla
   def centra(self,win,ancho,alto): 
-      fraccion_pantalla = 8
+      fraccion_pantalla = 2
       """ centra las ventanas en la pantalla """ 
       x = win.winfo_screenwidth() // fraccion_pantalla  - ancho // fraccion_pantalla 
       y = win.winfo_screenheight() // fraccion_pantalla - alto // fraccion_pantalla
@@ -272,7 +278,7 @@ class Inventario:
     self.unidad.insert(0,self.treeProductos.item(self.treeProductos.selection())['values'][3])
 
   # Operaciones con la base de datos
-  def run_Query(self, query, parametros =()): 
+  def run_Query(self, query, parametros = ()):
     ''' Función para ejecutar los Querys a la base de datos '''
     with sqlite3.connect(self.db_name) as conn:
         cursor = conn.cursor()
@@ -300,13 +306,14 @@ class Inventario:
     self.idNit.insert(0,row[0])
     self.razonSocial.insert(0,row[1])
     self.ciudad.insert(0,row[2])
-    self.codigo.insert(0,row[3])
-    self.descripcion.insert(0,row[4])
-    self.unidad.insert(0,row[5])
-    self.cantidad.insert(0,row[6])
-    self.precio.insert(0,row[7])
-    self.fecha.insert(0,row[8])  
+    self.codigo.insert(0,row[4])
+    self.descripcion.insert(0,row[5])
+    self.unidad.insert(0,row[6])
+    self.cantidad.insert(0,row[7])
+    self.precio.insert(0,row[8])
+    self.fecha.insert(0,row[9])  
           
+# hola
   # Crear Código que haga estas caracteristicas
   def adiciona_Registro(self, event=None):
     '''Adiciona un producto a la BD si la validación es True'''
@@ -318,15 +325,6 @@ class Inventario:
       
   def eliminaRegistro(self, event=None):
     '''Elimina un Registro en la BD'''
-    pass
-  
-  def consultarDB(self):
-    '''Consulta con Id o Nit del proveedor'''
-  #  self.limpiaCampos()
-  #  query = '''SELECT * FROM Proveedores WHERE idNitProv = ?'''
-  #  self.run_Query(query,[self.idNit.get()])
-  #  self.lee_treeProductos()
-  #  self.carga_Datos()
     pass
   
 
