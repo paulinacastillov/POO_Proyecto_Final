@@ -29,7 +29,7 @@ class Inventario:
     self.win = tk.Tk() 
     self.win.geometry(f"{int(ancho/30)}x{int(alto/30)}")
     self.win.iconbitmap(self.path + r'/imagenes/dt.ico')
-    self.win.resizable(False, False)
+    self.win.resizable(True, True)
     self.win.title("Manejo de Proveedores") 
 
     #Centra la pantalla
@@ -197,36 +197,42 @@ class Inventario:
 
     #Frame 2 para contener los botones
     self.frm2 = ttk.Frame(self.win)
-    self.frm2.configure(height=100, width=800)
+    self.frm2.configure(height=90, width=ancho)
+   
 
     #Botón para Buscar un Proveedor
     self.btnBuscar = ttk.Button(self.frm2)
     self.btnBuscar.configure(text='Buscar')
-    self.btnBuscar.place(anchor="nw", width=70, x=200, y=100)
+    self.btnBuscar.pack(side="bottom")
+    self.btnBuscar.place(anchor="nw", width=70, x=140, y=10)
 
-    #Botón para Guardar los datos
+    # Botón para Guardar los datos
     self.btnGrabar = ttk.Button(self.frm2)
     self.btnGrabar.configure(text='Grabar')
-    self.btnGrabar.place(anchor="nw", width=70, x=275, y=10)
+    self.btnGrabar.pack(side="bottom")
+    self.btnGrabar.place(anchor="nw", width=70, x=210, y=10)
 
-    #Botón para Editar los datos
+    # Botón para Editar los datos
     self.btnEditar = ttk.Button(self.frm2)
     self.btnEditar.configure(text='Editar')
-    self.btnEditar.place(anchor="nw", width=70, x=350, y=10)
+    self.btnEditar.pack(side="bottom")
+    self.btnEditar.place(anchor="nw", width=70, x=280, y=10)
 
-    #Botón para Elimnar datos
+    # Botón para Eliminar datos
     self.btnEliminar = ttk.Button(self.frm2)
     self.btnEliminar.configure(text='Eliminar')
-    self.btnEliminar.place(anchor="nw", width=70, x=425, y=10)
+    self.btnEliminar.pack(side="bottom")
+    self.btnEliminar.place(anchor="nw", width=70, x=350, y=10)
 
-    #Botón para cancelar una operación
+    # Botón para cancelar una operación
     self.btnCancelar = ttk.Button(self.frm2)
-    self.btnCancelar.configure(text='Cancelar', width=80,command = self.limpiaCampos)
-    self.btnCancelar.place(anchor="nw", width=70, x=500, y=10)
+    self.btnCancelar.configure(text='Cancelar', command=self.limpiaCampos)
+    self.btnCancelar.pack(side="bottom")
+    self.btnCancelar.place(anchor="nw", width=70, x=420, y=10)
 
     #Ubicación del Frame 2
-    self.frm2.place(anchor="nw", height=60, relwidth=1, y=755)
-    self.win.pack(anchor="center", side="top")
+    self.frm2.place(anchor="nw", height=90, relwidth=1, y=635)
+    self.win.pack(anchor="s",side="top")
 
     # widget Principal del sistema
     self.mainwindow = self.win
