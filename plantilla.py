@@ -300,10 +300,10 @@ class Inventario:
     ''' Al final del for row queda con la última tupla
         y se usan para cargar las variables de captura
     ''' 
-    self.idNit.insert(0,row[0]) #row[0] es el idNitProv 
+    self.idNit.insert(0,row[0])
     self.razonSocial.insert(0,row[1]) 
     self.ciudad.insert(0,row[2]) 
-    #el row[3] es el idNit
+    
     self.codigo.insert(0,row[4])
     self.descripcion.insert(0,row[5])
     self.unidad.insert(0,row[6])
@@ -332,7 +332,8 @@ class Inventario:
    #  query = '''SELECT * FROM Proveedores WHERE idNitProv = ?'''
    #  self.run_Query(query,[self.idNit.get()])
     self.lee_treeProductos(self.query, self.op)
-    self.idNit.delete(0,'end')
+    slef.lim
+    self.idNit.delete(0,'end') 
     
    #  self.carga_Datos()
   pass
