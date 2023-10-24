@@ -12,14 +12,14 @@ class Inventario:
   def __init__(self, master=None):
 
     self.path = os.path.abspath('')#r'X:/Users/ferna/Documents/UNal/Alumnos/2023_S2/ProyInventario'
-    self.db_name = self.path + r'/Inventario.db' # Toca conseguir una base de datos
+    self.db_name = self.path + r'/bases_de_datos/Inventario.db' # Toca conseguir una base de datos
     ancho=830;alto=840 # Dimensione de la pantalla
     actualiza = None
 
     # Crea ventana principal
     self.win = tk.Tk() 
     self.win.geometry(f"{ancho}x{alto}")
-    self.win.iconbitmap("dt.ico")
+    self.win.iconbitmap("imagenes/dt.ico")
     self.win.resizable(False, False)
     self.win.title("Manejo de Proveedores") 
 
@@ -326,7 +326,7 @@ class Inventario:
   #  query = '''SELECT * FROM Proveedores WHERE idNitProv = ?'''
   #  self.run_Query(query,[self.idNit.get()])
   #  self.lee_treeProductos()
-  #  self.carga_Datos()
+    self.carga_Datos()
     pass
   
 
