@@ -173,7 +173,7 @@ class Inventario:
 
     #Carga los datos en treeProductos
     # Comentada para no mostrar los datos iniciales
-    self.lee_treeProductos() 
+    #self.lee_treeProductos() 
     self.treeProductos.place(anchor="nw", height=560, width=790, x=2, y=230)
 
     #Scrollbar en el eje Y de treeProductos
@@ -280,32 +280,36 @@ class Inventario:
         conn.commit()
     return result
 
-  def lee_treeProductos(self):
+  def lee_treeProductos(self,query,op):
     ''' Carga los datos y Limpia la Tabla tablaTreeView '''
     tabla_TreeView = self.treeProductos.get_children()
     for linea in tabla_TreeView:
         self.treeProductos.delete(linea) # Límpia la filas del TreeView
+        
+    #El query une la tabla Productos con la tabla Proveedores tomando como iguales idNitProv y idNit
+    db_rows = self.run_Query(self.query,self.op) # db_rows contine la vista del query
     
-    #Seleccionando los datos de la BD
-    query = '''SELECT * from Proveedores INNER JOIN Productos WHERE idNitProv = idNit ORDER BY idNitProv'''
-    db_rows = self.run_Query(query) # db_rows contine la vista del query
-      
+    
     # Insertando los datos de la BD en treeProductos de la pantalla
     for row in db_rows:
       self.treeProductos.insert('',0, text = row[0], values = [row[4],row[5],row[6],row[7],row[8],row[9]])
-
+    # EL for ubica los valores del query en el treeview(GUI)
+    for row in db_rows:
+        self.treeProductos.delete(linea) # Límpia la filas del TreeView
+        
     ''' Al final del for row queda con la última tupla
         y se usan para cargar las variables de captura
-    '''
-    self.idNit.insert(0,row[0])
-    self.razonSocial.insert(0,row[1])
-    self.ciudad.insert(0,row[2])
-    self.codigo.insert(0,row[3])
-    self.descripcion.insert(0,row[4])
-    self.unidad.insert(0,row[5])
-    self.cantidad.insert(0,row[6])
-    self.precio.insert(0,row[7])
-    self.fecha.insert(0,row[8])  
+    ''' 
+    self.idNit.insert(0,row[0]) #row[0] es el idNitProv 
+    self.razonSocial.insert(0,row[1]) 
+    self.ciudad.insert(0,row[2]) 
+    #el row[3] es el idNit
+    self.codigo.insert(0,row[4])
+    self.descripcion.insert(0,row[5])
+    self.unidad.insert(0,row[6])
+    self.cantidad.insert(0,row[7])
+    self.precio.insert(0,row[8])
+    self.fecha.insert(0,row[9])  
           
   # Crear Código que haga estas caracteristicas
   def adiciona_Registro(self, event=None):
@@ -322,12 +326,16 @@ class Inventario:
   
   def consultarDB(self):
     '''Consulta con Id o Nit del proveedor'''
-  #  self.limpiaCampos()
-  #  query = '''SELECT * FROM Proveedores WHERE idNitProv = ?'''
-  #  self.run_Query(query,[self.idNit.get()])
-  #  self.lee_treeProductos()
-    self.carga_Datos()
-    pass
+    self.query = '''SELECT * from Proveedores INNER JOIN Productos WHERE idNitProv = ? ORDER BY idNitProv''' 
+   #Seleccionando los datos de la BD
+    self.op = [self.idNit.get()]
+   #  query = '''SELECT * FROM Proveedores WHERE idNitProv = ?'''
+   #  self.run_Query(query,[self.idNit.get()])
+    self.lee_treeProductos(self.query, self.op)
+    self.idNit.delete(0,'end')
+    
+   #  self.carga_Datos()
+  pass
   
 
 if __name__ == "__main__":
