@@ -21,7 +21,7 @@ class Inventario:
     # alto=root.winfo_screenheight() 
     # root.destroy()
     ancho=700
-    alto=800
+    alto=1000
 
     actualiza = None
 
@@ -252,13 +252,20 @@ class Inventario:
       win.deiconify() # Se usa para restaurar la ventana
 
  # Validaciones del sistema
+ # ver que hacer cuando se pase de los 15, borra los 15 pero el 16 lo deja ahí
+ # Buscar como blanquear
+
   def validaIdNit(self, event):
     ''' Valida que la longitud no sea mayor a 15 caracteres'''
     if event.char:
       if len(self.idNit.get()) >= 15:
-         mssg.showerror('Atención!!','.. ¡Máximo 15 caracteres! ..')
+          mssg.showerror('Atención!!','.. ¡Máximo 15 caracteres! ..')
+          # for i in range(len(self.idNit.get())):
+          #   self.idNit.delete(0)
+          self.idNit.delete(0,'end')
+         
     else:
-        self.idNit.delete(14)
+        self.idNit.delete(15)
 
   #Rutina de limpieza de datos
   def limpiaCampos(self):
@@ -294,6 +301,7 @@ class Inventario:
 
   def lee_treeProductos(self,query,op):
     tabla_TreeView = self.treeProductos.get_children()
+
     for linea in tabla_TreeView:
         self.treeProductos.delete(linea) # Límpia la filas del TreeView
         
@@ -305,8 +313,9 @@ class Inventario:
     for row in db_rows:
       self.treeProductos.insert('',0, text = row[0], values = [row[4],row[5],row[6],row[7],row[8],row[9]])
     # EL for ubica los valores del query en el treeview(GUI)
-    for row in db_rows:
-        self.treeProductos.delete(linea) # Límpia la filas del TreeView
+
+    # for row in db_rows:
+    #     self.treeProductos.delete(linea) # Límpia la filas del TreeView
         
     ''' Al final del for row queda con la última tupla
         y se usan para cargar las variables de captura
@@ -322,7 +331,7 @@ class Inventario:
     self.precio.insert(0,row[8])
     self.fecha.insert(0,row[9])  
           
-# hola
+
   # Crear Código que haga estas caracteristicas
   def adiciona_Registro(self, event=None):
     '''Adiciona un producto a la BD si la validación es True'''
@@ -336,6 +345,7 @@ class Inventario:
     '''Elimina un Registro en la BD'''
     pass
   def consultarDB(self):
+# Poner try cuando use base de datos
     '''Consulta con Id o Nit del proveedor'''
     self.query = '''SELECT * from Proveedores INNER JOIN Productos WHERE idNitProv = ? ORDER BY idNitProv''' 
    #Seleccionando los datos de la BD
