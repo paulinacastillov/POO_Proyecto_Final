@@ -182,7 +182,8 @@ class Inventario:
 
     #Carga los datos en treeProductos
     # Comentada para no mostrar los datos iniciales, esto los muestra
-    # self.lee_treeProductos() 
+    self.lee_treeProductos() 
+    self.limpiaCampos()
     self.treeProductos.place(anchor="nw", height=560, width=790, x=2, y=230)
 
     #Scrollbar en el eje Y de treeProductos
@@ -292,21 +293,22 @@ class Inventario:
         conn.commit()
     return result
 
-  def lee_treeProductos(self,query,op):
+  def lee_treeProductos(self):
     tabla_TreeView = self.treeProductos.get_children()
     for linea in tabla_TreeView:
         self.treeProductos.delete(linea) # Límpia la filas del TreeView
-        
+    query = '''SELECT * from Proveedores INNER JOIN Productos WHERE idNit = idNitProv ORDER BY idNitProv'''
     #El query une la tabla Productos con la tabla Proveedores tomando como iguales idNitProv y idNit
-    db_rows = self.run_Query(self.query,self.op) # db_rows contine la vista del query
+    db_rows = self.run_Query(query) # db_rows contine la vista del query
     
-    
+
     # Insertando los datos de la BD en treeProductos de la pantalla
+    
     for row in db_rows:
-      self.treeProductos.insert('',0, text = row[0], values = [row[4],row[5],row[6],row[7],row[8],row[9]])
+      if (row[0] == row[3]):
+        self.treeProductos.insert('',0, text = row[3], values = [row[4],row[5],row[6],row[7],row[8],row[9]])
     # EL for ubica los valores del query en el treeview(GUI)
-    for row in db_rows:
-        self.treeProductos.delete(linea) # Límpia la filas del TreeView
+   
         
     ''' Al final del for row queda con la última tupla
         y se usan para cargar las variables de captura
@@ -321,11 +323,11 @@ class Inventario:
     self.cantidad.insert(0,row[7])
     self.precio.insert(0,row[8])
     self.fecha.insert(0,row[9])  
-          
-# hola
+        
   # Crear Código que haga estas caracteristicas
   def adiciona_Registro(self, event=None):
     '''Adiciona un producto a la BD si la validación es True'''
+    
     pass
 
   def editaTreeProveedores(self, event=None):
@@ -337,15 +339,20 @@ class Inventario:
     pass
   def consultarDB(self):
     '''Consulta con Id o Nit del proveedor'''
-    self.query = '''SELECT * from Proveedores INNER JOIN Productos WHERE idNitProv = ? ORDER BY idNitProv''' 
-   #Seleccionando los datos de la BD
-    self.op = [self.idNit.get()]
-   #  query = '''SELECT * FROM Proveedores WHERE idNitProv = ?'''
-   #  self.run_Query(query,[self.idNit.get()])
-    self.lee_treeProductos(self.query, self.op)
-    self.limpiaCampos()
+    tabla_TreeView = self.treeProductos.get_children()
+    for linea in tabla_TreeView:
+        self.treeProductos.delete(linea) # Límpia la filas del TreeView
+    #Seleccionando los datos de la BD
+    query = '''SELECT * from Proveedores INNER JOIN Productos WHERE idNit = ? ORDER BY idNitProv'''
+    self.param = [self.idNit.get()] #captura del idNit a buscar
+    db_rows = self.run_Query(query,self.param)
+    for row in db_rows:
+      if (row[0] == row[3]):
+        print(row)
+        self.treeProductos.insert('',0, text = row[3], values = [row[4],row[5],row[6],row[7],row[8],row[9]])
+        print("----")
+    #self.limpiaCampos()
     
-   #  self.carga_Datos()
   pass
   
 
