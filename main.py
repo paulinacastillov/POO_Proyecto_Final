@@ -6,6 +6,7 @@ import tkinter.ttk as ttk
 from tkinter import messagebox as mssg
 import sqlite3
 import os
+from Funciones import *
 
 
 class Inventario:
@@ -56,8 +57,9 @@ class Inventario:
     self.idNit.configure(takefocus=True)
     self.idNit.place(anchor="nw", x=50, y=40)
     self.idNit.bind("<Key>", self.validaIdNit)
-    self.idNit.bind("<BackSpace>", lambda _:self.idNit.delete(len(self.idNit.get())),'end')
-
+    self.idNit.bind("<Key>",self.id_valido)
+    self.idNit.bind("<BackSpace>", lambda _:self.idNit.delete(len(self.idNit.get())+1),'end')
+    
     #Etiqueta razón social del Proveedor
     self.lblRazonSocial = ttk.Label(self.frm1)
     self.lblRazonSocial.configure(text='Razon social', width=12)
@@ -256,17 +258,52 @@ class Inventario:
  # ver que hacer cuando se pase de los 15, borra los 15 pero el 16 lo deja ahí
  # Buscar como blanquear
 
+  # Borra el último 
+
+
   def validaIdNit(self, event):
     ''' Valida que la longitud no sea mayor a 15 caracteres'''
     if event.char:
-      if len(self.idNit.get()) >= 15:
-          mssg.showerror('Atención!!','.. ¡Máximo 15 caracteres! ..')
-          # for i in range(len(self.idNit.get())):
-          #   self.idNit.delete(0)
-          self.idNit.delete(0,'end')
+
+      cadena = self.idNit.get()
+      if len(cadena) > 14:
+        mssg.showerror('Atención!!',
+                       'El Id/Nit solo puede estar compuesto por 15 caracteres. Se eliminará el último escrito para agregar otro carcater')
+        cadena = cadena[:14]
+        self.idNit.delete(0, "end")
+        self.idNit.insert("end", cadena)
+
+# Manda el mensaje de error y borra todo pero igual escribe el elementos
+  def id_valido(self,event):
+
+    cadena = self.idNit.get()
+    widget = event.widget
+    caracter = event.char
+
+    if not caracter.isdigit():
+      mssg.showerror('Atención!!',
+                        'El Id/Nit solo puede estar compuesto numeros.')
+      self.idNit.delete(0, "end")
+      self.idNit.insert("end", cadena)
+      #cadena = cadena[:-1]
+      #print(cadena)
+      #self.idNit.delete(-1, "end")
+      # self.idNit.insert("end", cadena)
+      # self.idNit.delete(-1, "end")
+
+    
+
+      # if len(self.idNit.get()) >= 15:
+      #     mssg.showerror('Atención!!','El Id/Nit solo puede estar compuesto por 15 caracteres')
+      #     self.idNit.delete(0,'end')
+
+
+
          
     else:
         self.idNit.delete(15)
+
+      
 
   #Rutina de limpieza de datos
   def limpiaCampos(self):
@@ -317,8 +354,8 @@ class Inventario:
         self.treeProductos.insert('',0, text = row[3], values = [row[4],row[5],row[6],row[7],row[8],row[9]])
     # EL for ubica los valores del query en el treeview(GUI)
 
-    # for row in db_rows:
-    #     self.treeProductos.delete(linea) # Límpia la filas del TreeView
+    for row in db_rows:
+        self.treeProductos.delete(linea) # Límpia la filas del TreeView
         
     ''' Al final del for row queda con la última tupla
         y se usan para cargar las variables de captura
