@@ -65,7 +65,7 @@ class Inventario:
 
     #Captura razón social del Proveedor
     self.razonSocial = ttk.Entry(self.frm1)
-    self.razonSocial.configure(width=36)
+    self.razonSocial.configure(width=36,state= 'disabled')
     self.razonSocial.place(anchor="nw", x=290, y=40)
 
     #Etiqueta ciudad del Proveedor
@@ -75,7 +75,7 @@ class Inventario:
 
     #Captura ciudad del Proveedor
     self.ciudad = ttk.Entry(self.frm1)
-    self.ciudad.configure(width=30)
+    self.ciudad.configure(width=30,state= 'disabled')
     self.ciudad.place(anchor="nw", x=590, y=40)
 
     #Separador
@@ -90,7 +90,7 @@ class Inventario:
 
     #Captura el código del Producto
     self.codigo = ttk.Entry(self.frm1)
-    self.codigo.configure(width=13)
+    self.codigo.configure(width=13, state= 'disabled')
     self.codigo.place(anchor="nw", x=60, y=120)
 
     #Etiqueta descripción del Producto
@@ -100,7 +100,7 @@ class Inventario:
 
     #Captura la descripción del Producto
     self.descripcion = ttk.Entry(self.frm1)
-    self.descripcion.configure(width=36)
+    self.descripcion.configure(width=36, state= 'disabled')
     self.descripcion.place(anchor="nw", x=290, y=120)
 
     #Etiqueta unidad o medida del Producto
@@ -110,7 +110,7 @@ class Inventario:
 
     #Captura la unidad o medida del Producto
     self.unidad = ttk.Entry(self.frm1)
-    self.unidad.configure(width=10)
+    self.unidad.configure(width=10, state= 'disabled')
     self.unidad.place(anchor="nw", x=590, y=120)
 
     #Etiqueta cantidad del Producto
@@ -120,7 +120,7 @@ class Inventario:
 
     #Captura la cantidad del Producto
     self.cantidad = ttk.Entry(self.frm1)
-    self.cantidad.configure(width=12)
+    self.cantidad.configure(width=12,state= 'disabled')
     self.cantidad.place(anchor="nw", x=70, y=170)
 
     #Etiqueta precio del Producto
@@ -130,7 +130,7 @@ class Inventario:
 
     #Captura el precio del Producto
     self.precio = ttk.Entry(self.frm1)
-    self.precio.configure(width=15)
+    self.precio.configure(width=15,state= 'disabled')
     self.precio.place(anchor="nw", x=220, y=170)
 
     #Etiqueta fecha de compra del Producto
@@ -140,7 +140,7 @@ class Inventario:
 
     #Captura la fecha de compra del Producto
     self.fecha = ttk.Entry(self.frm1)
-    self.fecha.configure(width=10)
+    self.fecha.configure(width=10,state= 'disabled')
     self.fecha.place(anchor="nw", x=390, y=170)
 
     #Separador
@@ -227,7 +227,7 @@ class Inventario:
 
     # Botón para cancelar una operación
     self.btnCancelar = ttk.Button(self.frm2)
-    self.btnCancelar.configure(text='Cancelar', command=self.limpiaCampos)
+    self.btnCancelar.configure(text='Cancelar', command=self.cancelar)
     self.btnCancelar.pack(side="bottom")
     self.btnCancelar.place(anchor="nw", width=70, x=420, y=10)
 
@@ -315,7 +315,21 @@ class Inventario:
         
     
     
-  # Crear Código que haga estas caracteristicas
+  # Funciones de botones
+  def cancelar(self):
+    self.codigo.delete(0,'end')
+    self.descripcion.delete(0,'end')
+    self.unidad.delete(0,'end')
+    self.cantidad.delete(0,'end')
+    self.precio.delete(0,'end')
+    self.fecha.delete(0,'end')
+    self.codigo.configure(state='disabled')
+    self.descripcion.configure(state='disabled')
+    self.unidad.configure(state='disabled')
+    self.cantidad.configure(state='disabled')
+    self.precio.configure(state='disabled')
+    self.fecha.configure(state='disabled')
+    
   def adiciona_Registro(self, event=None):
     '''Adiciona un producto a la BD si la validación es True'''
     pass
@@ -328,11 +342,17 @@ class Inventario:
    #self.codigo.insert(self.treeProductos.item(seleccion)["text"])
     self.cod =self.treeProductos.item(seleccion)["text"]
     self.values =self.treeProductos.item(seleccion)["values"]
+    self.codigo.configure(state='normal')
     self.codigo.insert(0,self.values[0])
+    self.descripcion.configure(state='normal')
     self.descripcion.insert(0,self.values[1])
+    self.unidad.configure(state='normal')
     self.unidad.insert(0,self.values[2])
+    self.cantidad.configure(state='normal')
     self.cantidad.insert(0,self.values[3])
+    self.precio.configure(state='normal')
     self.precio.insert(0,self.values[4])
+    self.fecha.configure(state='normal')
     self.fecha.insert(0,self.values[5])
     pass
       
@@ -351,6 +371,8 @@ class Inventario:
     query = '''SELECT * from Proveedores INNER JOIN Productos WHERE idNit = ? ORDER BY idNitProv'''
     self.param = [self.idNit.get()] #captura del idNit a buscar
     db_rows = self.run_Query(query,self.param)
+    self.razonSocial.configure(state='normal')
+    self.ciudad.configure(state='normal')
     for row in db_rows:
       if (row[0] == row[3]):
         self.treeProductos.insert('',0, text = row[3], values = [row[4],row[5],row[6],row[7],row[8],row[9]])
@@ -359,6 +381,7 @@ class Inventario:
     #row[0] es el idNitProv 
     self.razonSocial.insert(0,row[1])
     self.ciudad.insert(0,row[2])
+  
   pass
   
 
