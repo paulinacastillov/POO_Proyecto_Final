@@ -203,13 +203,13 @@ class Inventario:
 
     #Botón para Buscar un Proveedor
     self.btnBuscar = ttk.Button(self.frm2)
-    self.btnBuscar.configure(text='Buscar', command=self.consultarDB)
+    self.btnBuscar.configure(text='Buscar', command=self.buscarDB)
     self.btnBuscar.pack(side="bottom")
     self.btnBuscar.place(anchor="nw", width=70, x=140, y=10)
 
     # Botón para Guardar los datos
     self.btnGrabar = ttk.Button(self.frm2)
-    self.btnGrabar.configure(text='Grabar')
+    self.btnGrabar.configure(text='Grabar',command=self.grabarDB)
     self.btnGrabar.pack(side="bottom")
     self.btnGrabar.place(anchor="nw", width=70, x=210, y=10)
 
@@ -300,59 +300,65 @@ class Inventario:
     query = '''SELECT * from Proveedores INNER JOIN Productos WHERE idNit = idNitProv ORDER BY idNitProv'''
     #El query une la tabla Productos con la tabla Proveedores tomando como iguales idNitProv y idNit
     db_rows = self.run_Query(query) # db_rows contine la vista del query
-    
-
-    # Insertando los datos de la BD en treeProductos de la pantalla
-    
-    for row in db_rows:
-      if (row[0] == row[3]):
-        self.treeProductos.insert('',0, text = row[3], values = [row[4],row[5],row[6],row[7],row[8],row[9]])
-    # EL for ubica los valores del query en el treeview(GUI)
-   
         
     ''' Al final del for row queda con la última tupla
         y se usan para cargar las variables de captura
     '''
-    self.idNit.insert(0,row[0]) #row[0] es el idNitProv 
-    self.razonSocial.insert(0,row[1])
-    self.ciudad.insert(0,row[2])
-    #el row[3] es el idNit
-    self.codigo.insert(0,row[4])
-    self.descripcion.insert(0,row[5])
-    self.unidad.insert(0,row[6])
-    self.cantidad.insert(0,row[7])
-    self.precio.insert(0,row[8])
-    self.fecha.insert(0,row[9])  
+    
+    #self.codigo.insert(0,row[4])
+    #self.descripcion.insert(0,row[5])
+    #self.unidad.insert(0,row[6])
+    #self.cantidad.insert(0,row[7])
+    #self.precio.insert(0,row[8])
+    #self.fecha.insert(0,row[9])  
         
+        
+    
+    
   # Crear Código que haga estas caracteristicas
   def adiciona_Registro(self, event=None):
     '''Adiciona un producto a la BD si la validación es True'''
-    
     pass
+  def grabarDB(self):
+    '''Graba lo que se a cambiado en la interface '''
 
   def editaTreeProveedores(self, event=None):
-    ''' Edita una tupla del TreeView'''
+    ''' Edita una tupla del TreeView despues de seleccionarla'''
+    seleccion = self.treeProductos.focus()
+   #self.codigo.insert(self.treeProductos.item(seleccion)["text"])
+    self.cod =self.treeProductos.item(seleccion)["text"]
+    self.values =self.treeProductos.item(seleccion)["values"]
+    self.codigo.insert(0,self.values[0])
+    self.descripcion.insert(0,self.values[1])
+    self.unidad.insert(0,self.values[2])
+    self.cantidad.insert(0,self.values[3])
+    self.precio.insert(0,self.values[4])
+    self.fecha.insert(0,self.values[5])
     pass
       
   def eliminaRegistro(self, event=None):
     '''Elimina un Registro en la BD'''
     pass
-  def consultarDB(self):
+  
+  
+  def buscarDB(self): #TRAER DATOS DEL PROEVEDOR!!!!!
     '''Consulta con Id o Nit del proveedor'''
     tabla_TreeView = self.treeProductos.get_children()
     for linea in tabla_TreeView:
         self.treeProductos.delete(linea) # Límpia la filas del TreeView
+   
     #Seleccionando los datos de la BD
     query = '''SELECT * from Proveedores INNER JOIN Productos WHERE idNit = ? ORDER BY idNitProv'''
     self.param = [self.idNit.get()] #captura del idNit a buscar
     db_rows = self.run_Query(query,self.param)
     for row in db_rows:
       if (row[0] == row[3]):
-        print(row)
         self.treeProductos.insert('',0, text = row[3], values = [row[4],row[5],row[6],row[7],row[8],row[9]])
-        print("----")
-    #self.limpiaCampos()
+        # EL for ubica los valores del query en el treeview(GUI)
     
+    #row[0] es el idNitProv 
+    self.razonSocial.insert(0,row[1])
+    self.ciudad.insert(0,row[2])
   pass
   
 
