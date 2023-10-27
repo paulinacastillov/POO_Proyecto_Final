@@ -184,8 +184,6 @@ class Inventario:
 
     #Carga los datos en treeProductos
     # Comentada para no mostrar los datos iniciales, esto los muestra
-    self.lee_treeProductos() 
-    self.limpiaCampos()
     self.treeProductos.place(anchor="nw", height=560, width=790, x=2, y=230)
 
     #Scrollbar en el eje Y de treeProductos
@@ -232,7 +230,7 @@ class Inventario:
     self.btnCancelar.configure(text='Cancelar', command=self.cancelar)
     self.btnCancelar.pack(side="bottom")
     self.btnCancelar.place(anchor="nw", width=70, x=420, y=10)
-
+    
     #Ubicación del Frame 2
     self.frm2.place(anchor="nw", height=90, relwidth=1, y=635)
     self.win.pack(anchor="s",side="top")
@@ -337,27 +335,35 @@ class Inventario:
         conn.commit()
     return result
 
-  def lee_treeProductos(self):
-    tabla_TreeView = self.treeProductos.get_children()
-
-    for linea in tabla_TreeView:
-        self.treeProductos.delete(linea) # Límpia la filas del TreeView
-    query = '''SELECT * from Proveedores INNER JOIN Productos WHERE idNit = idNitProv ORDER BY idNitProv'''
-    #El query une la tabla Productos con la tabla Proveedores tomando como iguales idNitProv y idNit
-    db_rows = self.run_Query(query) # db_rows contine la vista del query
-        
-    ''' Al final del for row queda con la última tupla
-        y se usan para cargar las variables de captura
-    '''
-    
-    #self.codigo.insert(0,row[4])
-    #self.descripcion.insert(0,row[5])
-    #self.unidad.insert(0,row[6])
-    #self.cantidad.insert(0,row[7])
-    #self.precio.insert(0,row[8])
-    #self.fecha.insert(0,row[9])  
+  
         
         
+  def valEx_idNitProv(self,busqueda):
+    '''Revision si el idNitProv Insertado existe en la tabla proveedores, requiere el valor a buscar'''
+    query = '''SELECT idNitProv from Proveedores'''
+    column = self.run_Query(query)
+    busca = []
+    for db_column in column:
+      busca.append(db_column[0])
+    i = busca.count(busqueda)
+    if(i<=0):
+      return False
+    else :
+      return True
+      
+  def valEx_idNit(self,busqueda):
+    '''Revision si el idNit Insertado existe en la tabla proveedores, requiere el valor a buscar'''
+    query = '''SELECT idNit from Productos'''
+    column = self.run_Query(query)
+    busca = []
+    for db_column in column:
+      busca.append(db_column[0])
+    i = busca.count(busqueda)
+    if(i<=0):
+      return False
+    else :
+      return True
+      
     
     
   # Funciones de botones
@@ -368,13 +374,8 @@ class Inventario:
     self.cantidad.delete(0,'end')
     self.precio.delete(0,'end')
     self.fecha.delete(0,'end')
-    self.codigo.configure(state='disabled')
-    self.descripcion.configure(state='disabled')
-    self.unidad.configure(state='disabled')
-    self.cantidad.configure(state='disabled')
-    self.precio.configure(state='disabled')
-    self.fecha.configure(state='disabled')
     
+      
   def adiciona_Registro(self, event=None):
     '''Adiciona un producto a la BD si la validación es True'''
     pass
@@ -384,8 +385,6 @@ class Inventario:
   def editaTreeProveedores(self, event=None):
     ''' Edita una tupla del TreeView despues de seleccionarla'''
     seleccion = self.treeProductos.focus()
-   #self.codigo.insert(self.treeProductos.item(seleccion)["text"])
-    self.cod =self.treeProductos.item(seleccion)["text"]
     self.values =self.treeProductos.item(seleccion)["values"]
     self.codigo.configure(state='normal')
     self.codigo.insert(0,self.values[0])
@@ -406,28 +405,56 @@ class Inventario:
     pass
   
   
-  def buscarDB(self): #TRAER DATOS DEL PROEVEDOR!!!!!
+  def buscarDB(self): 
     '''Consulta con Id o Nit del proveedor'''
     tabla_TreeView = self.treeProductos.get_children()
     for linea in tabla_TreeView:
         self.treeProductos.delete(linea) # Límpia la filas del TreeView
-   
-    #Seleccionando los datos de la BD
-    query = '''SELECT * from Proveedores INNER JOIN Productos WHERE idNit = ? ORDER BY idNitProv'''
-    self.param = [self.idNit.get()] #captura del idNit a buscar
-    db_rows = self.run_Query(query,self.param)
-    self.razonSocial.configure(state='normal')
-    self.ciudad.configure(state='normal')
-    for row in db_rows:
-      if (row[0] == row[3]):
-        self.treeProductos.insert('',0, text = row[3], values = [row[4],row[5],row[6],row[7],row[8],row[9]])
-        # EL for ubica los valores del query en el treeview(GUI)
-    
-    #row[0] es el idNitProv 
-    self.razonSocial.insert(0,row[1])
-    self.ciudad.insert(0,row[2])
-  
-  pass
+    self.razonSocial.delete(0,'end')
+    self.ciudad.delete(0,'end')
+   #Validacion    
+    self.param = self.idNit.get()
+    self.validNitProv = self.valEx_idNitProv(self.param) #Valida si existe el proevedor
+    self.validNit = self.valEx_idNit(self.param) #Valida si el proveedor tiene productos
+    if(self.validNitProv == True):  
+      
+      #Seleccionando los datos de la BD
+      query1 = '''SELECT * from Proveedores WHERE idNitProv = ? '''
+      #Activa las casillas
+      self.razonSocial.configure(state='normal')
+      self.ciudad.configure(state='normal')
+      self.codigo.configure(state='normal')
+      self.descripcion.configure(state='normal')
+      self.unidad.configure(state='normal')
+      self.cantidad.configure(state='normal')
+      self.precio.configure(state='normal')
+      self.fecha.configure(state='normal')
+      #Rellena casillas de proveedor
+      db_rows = self.run_Query(query1,[self.param])
+      for row in db_rows:
+        pass
+      self.razonSocial.insert(0,row[1])
+      self.ciudad.insert(0,row[2])
+        
+      if(self.validNit == True):
+        query2 = '''SELECT * from Productos WHERE idNit = ? '''
+        #Rellena casillas de Productos
+        db_rows = self.run_Query(query2,[self.param])
+        for row in db_rows:
+          self.treeProductos.insert('',0, text = row[0], values = [row[1],row[2],row[3],row[4],row[5],row[6]])
+         # EL for ubica los valores del query en el treeview(GUI)
+
+      else:
+        print("No existnen productos")
+         #ERROR EL PROVEEDOR NO TIENE PRODUCTOS PREGUNTAR SI DESEA CREAR UNO
+         #EN CASO DE SI HABILITAR LOS CAMPOS
+         #EN CASO DE NO, NO HACER NADA
+        
+    else:
+      print("No existe Proveedor")
+      #ERROR NO EXISTE EL PROEVEDOR PREGUNTAR SI DESEA CREAR UNO
+      #EN CASO DE SI HABILITAR LOS CAMPOS
+      #EN CASO DE NO, BORRAR LO ESCRITO
   
 
 if __name__ == "__main__":
