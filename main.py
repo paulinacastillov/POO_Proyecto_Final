@@ -56,9 +56,9 @@ class Inventario:
     self.idNit = ttk.Entry(self.frm1)
     self.idNit.configure(takefocus=True)
     self.idNit.place(anchor="nw", x=50, y=40)
-    self.idNit.bind("<Key>", self.validaIdNit)
-    self.idNit.bind("<Key>",self.id_valido)
-    self.idNit.bind("<BackSpace>", lambda _:self.idNit.delete(len(self.idNit.get())+1),'end')
+    self.idNit.bind("<Return>", self.validaIdNit)
+    #self.idNit.bind("<Key>",self.id_valido)
+    #self.idNit.bind("<BackSpace>", lambda event: self.idNit.delete("end"))
     
     #Etiqueta razón social del Proveedor
     self.lblRazonSocial = ttk.Label(self.frm1)
@@ -259,47 +259,37 @@ class Inventario:
   # Borra el último 
 
 
+
+
   def validaIdNit(self, event):
-    ''' Valida que la longitud no sea mayor a 15 caracteres'''
-    if event.char:
-
-      cadena = self.idNit.get()
-      if len(cadena) > 14:
-        mssg.showerror('Atención!!',
-                       'El Id/Nit solo puede estar compuesto por 15 caracteres. Se eliminará el último escrito para agregar otro carcater')
-        cadena = cadena[:14]
-        self.idNit.delete(0, "end")
-        self.idNit.insert("end", cadena)
-
-# Manda el mensaje de error y borra todo pero igual escribe el elementos
-  def id_valido(self,event):
-
+  #Valida que la longitud no sea mayor a 15 caracteres y que solo se inserten números. '''
     cadena = self.idNit.get()
-    widget = event.widget
-    caracter = event.char
-
-    if not caracter.isdigit():
-      mssg.showerror('Atención!!',
-                        'El Id/Nit solo puede estar compuesto numeros.')
-      self.idNit.delete(0, "end")
-      self.idNit.insert("end", cadena)
-      #cadena = cadena[:-1]
-      #print(cadena)
-      #self.idNit.delete(-1, "end")
-      # self.idNit.insert("end", cadena)
-      # self.idNit.delete(-1, "end")
-
-    
-
-      # if len(self.idNit.get()) >= 15:
-      #     mssg.showerror('Atención!!','El Id/Nit solo puede estar compuesto por 15 caracteres')
-      #     self.idNit.delete(0,'end')
+    if len(cadena) > 14:
+        self.idNit.delete(0, "end")  # Eliminar todo el contenido del campo
+        mssg.showerror('Atención!!', 'El Id/NIT solo puede estar compuesto por 15 caracteres.')
+    elif not cadena.isdigit() and cadena:
+        # Buscar caracteres no válidos y eliminarlos
+        for char in cadena:
+            if not char.isdigit():
+                cadena = cadena.replace(char, "")
+        self.idNit.delete(0, "end")  # Eliminar todo el contenido del campo
+        mssg.showerror('Atención!!', 'El Id/NIT solo puede estar compuesto por números')
 
 
 
-         
-    else:
-        self.idNit.delete(15)
+
+
+
+
+
+
+
+ # def id_valido(self, event):
+ #       ''' Valida que solo se inserten números en el campo y muestra un mensaje de alerta en caso de caracteres inválidos '''
+ #       caracteres = self.idNit.get()
+ #       if not caracteres.isdigit():
+ #           mssg.showerror('Atención!!', 'El Id/NIT solo puede estar compuesto por números.')
+ #           self.idNit.delete(0, "end")  # Eliminar todo el contenido
 
       
 
