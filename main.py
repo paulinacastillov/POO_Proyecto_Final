@@ -203,7 +203,7 @@ class Inventario:
 
     #Botón para Buscar un Proveedor
     self.btnBuscar = ttk.Button(self.frm2)
-    self.btnBuscar.configure(text='Buscar', command=self.buscarDB)
+    self.btnBuscar.configure(text='Buscar', command=lambda: (self.buscarDB(),self.validaIdNit()))
     self.btnBuscar.pack(side="bottom")
     self.btnBuscar.place(anchor="nw", width=70, x=140, y=10)
 
@@ -261,7 +261,7 @@ class Inventario:
 
 
 
-  def validaIdNit(self, event):
+  def validaIdNit(self):
   #Valida que la longitud no sea mayor a 15 caracteres y que solo se inserten números. '''
     cadena = self.idNit.get()
     if len(cadena) > 14:
