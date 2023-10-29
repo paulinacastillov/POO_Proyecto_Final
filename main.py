@@ -266,7 +266,7 @@ class Inventario:
     if event.char:
 
       cadena = self.idNit.get()
-      if len(cadena) > 14:
+      if len(cadena) == 14:
         mssg.showerror('Atención!!',
                        'El Id/Nit solo puede estar compuesto por 15 caracteres. Se eliminará el último escrito para agregar otro carcater')
         cadena = cadena[:14]
