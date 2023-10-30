@@ -7,6 +7,7 @@ from tkinter import messagebox as mssg
 import sqlite3
 import os
 from Funciones import *
+import datetime
 
 
 class Inventario:
@@ -123,6 +124,7 @@ class Inventario:
     #Captura la cantidad del Producto
     self.cantidad = ttk.Entry(self.frm1)
     self.cantidad.configure(width=12,state= 'disabled')
+    self.cantidad.bind("<Key>", self.validaSeaNumero)
     self.cantidad.place(anchor="nw", x=70, y=170)
 
     #Etiqueta precio del Producto
@@ -260,19 +262,6 @@ class Inventario:
 
 
 
-<<<<<<< HEAD
-      cadena = self.idNit.get()
-      if len(cadena) == 14:
-        mssg.showerror('Atención!!',
-                       'El Id/Nit solo puede estar compuesto por 15 caracteres. Se eliminará el último escrito para agregar otro carcater')
-        cadena = cadena[:14]
-        self.idNit.delete(0, "end")
-        self.idNit.insert("end", cadena)
-
-# Manda el mensaje de error y borra todo pero igual escribe el elementos
-  def id_valido(self,event):
-=======
->>>>>>> d17c4d364cd27ec56f56843d6056630d5b04253f
 
   def validaIdNit(self):
   #Valida que la longitud no sea mayor a 15 caracteres y que solo se inserten números. '''
@@ -289,9 +278,29 @@ class Inventario:
         mssg.showerror('Atención!!', 'El Id/NIT solo puede estar compuesto por números')
 
 
+# Hace falta conectarlo a los botones de busqueda o editar para que cuando se presionen
+# Muestre error. Preguntar a Diego
+
+# Este se puede usar para validad cantidad y precio porque basicamente es lo mismo, en caso contrario cambiar
+# a funciones separadass pero no lo veo necesario por ahora. Charlar
+  def validaSeaNumero(self):
+  #Valida que la longitud no sea mayor a 15 caracteres y que solo se inserten números. '''
+    cadena = self.idNit.get()
+    if not cadena.isdigit() and cadena:
+        # Buscar caracteres no válidos y eliminarlos
+        for char in cadena:
+            if not char.isdigit():
+                cadena = cadena.replace(char, "")
+        self.idNit.delete(0, "end")  # Eliminar todo el contenido del campo
+        mssg.showerror('Atención!!', 'La cantidad debe ser un número')
 
 
+  def validaFecha(self):
+  #Valida que la longitud no sea mayor a 15 caracteres y que solo se inserten números. '''
+    cadena = self.idNit.get()
 
+    if not datetime.datetime.strptime(cadena, "%d-%m-%y").is_valid():
+       mssg.showerror('Atención!', 'La fecha debe tener formato dd/mm/aaaa además de ser valida')
 
 
 
@@ -448,13 +457,14 @@ class Inventario:
          # EL for ubica los valores del query en el treeview(GUI)
 
       else:
-        print("No existnen productos")
+        mssg.showerror('Atención!!', '"No existen productos"')
+        
          #ERROR EL PROVEEDOR NO TIENE PRODUCTOS PREGUNTAR SI DESEA CREAR UNO
          #EN CASO DE SI HABILITAR LOS CAMPOS
          #EN CASO DE NO, NO HACER NADA
         
     else:
-      print("No existe Proveedor")
+      mssg.showerror('Atención!!', "No existe proveedor")
       #ERROR NO EXISTE EL PROEVEDOR PREGUNTAR SI DESEA CREAR UNO
       #EN CASO DE SI HABILITAR LOS CAMPOS
       #EN CASO DE NO, BORRAR LO ESCRITO
