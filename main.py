@@ -29,7 +29,7 @@ class Inventario:
     # Crea ventana principal
     self.win = tk.Tk() 
     self.win.geometry(f"{int(ancho/30)}x{int(alto/30)}")
-    self.win.iconbitmap(self.path + r'/imagenes/dt.ico')
+   # self.win.iconbitmap(self.path + r'/imagenes/dt.ico')
     self.win.resizable(True, True)
     self.win.title("Manejo de Proveedores") 
 
@@ -215,7 +215,7 @@ class Inventario:
 
     # Botón para Editar los datos
     self.btnEditar = ttk.Button(self.frm2)
-    self.btnEditar.configure(text='Editar', command= self.editaTreeProveedores)
+    self.btnEditar.configure(text='Editar', command= self.editaTP)
     self.btnEditar.pack(side="bottom")
     self.btnEditar.place(anchor="nw", width=70, x=280, y=10)
 
@@ -255,7 +255,6 @@ class Inventario:
  # Validaciones del sistema
  # ver que hacer cuando se pase de los 15, borra los 15 pero el 16 lo deja ahí
  # Buscar como blanquear
-
   # Borra el último 
 
 
@@ -288,21 +287,12 @@ class Inventario:
       #self.idNit.delete(-1, "end")
       # self.idNit.insert("end", cadena)
       # self.idNit.delete(-1, "end")
-
-    
-
       # if len(self.idNit.get()) >= 15:
       #     mssg.showerror('Atención!!','El Id/Nit solo puede estar compuesto por 15 caracteres')
-      #     self.idNit.delete(0,'end')
-
-
-
-         
+      #     self.idNit.delete(0,'end')        
     else:
         self.idNit.delete(15)
-
-      
-
+        
   #Rutina de limpieza de datos
   def limpiaCampos(self):
       ''' Limpia todos los campos de captura'''
@@ -311,21 +301,52 @@ class Inventario:
       self.idNit.delete(0,'end')
       self.razonSocial.delete(0,'end')
       self.ciudad.delete(0,'end')
-      self.idNit.delete(0,'end')
       self.codigo.delete(0,'end')
       self.descripcion.delete(0,'end')
       self.unidad.delete(0,'end')
       self.cantidad.delete(0,'end')
       self.precio.delete(0,'end')
       self.fecha.delete(0,'end')
- 
-  #Rutina para cargar los datos en el árbol  
-  def carga_Datos(self):
-    self.idNit.insert(0,self.treeProductos.item(self.treeProductos.selection())['text'])
-    self.idNit.configure(state = 'readonly')
-    self.razonSocial.insert(0,self.treeProductos.item(self.treeProductos.selection())['values'][0])
-    self.unidad.insert(0,self.treeProductos.item(self.treeProductos.selection())['values'][3])
 
+  def limpiaProveedor(self):
+    '''Limpia campos del proveedor'''
+    self.razonSocial.delete(0,'end')
+    self.ciudad.delete(0,'end')
+    
+  def limpiaProductos(self):
+    '''Limpia campos de Productos'''
+    self.codigo.delete(0,'end')
+    self.descripcion.delete(0,'end')
+    self.unidad.delete(0,'end')
+    self.cantidad.delete(0,'end')
+    self.precio.delete(0,'end')
+    self.fecha.delete(0,'end')
+
+  def habilitaProductos(self):
+    '''Habilita los campos para crear productos'''
+    self.razonSocial.configure(state='normal')
+    self.ciudad.configure(state='normal')
+    self.codigo.configure(state='normal')
+    self.descripcion.configure(state='normal')
+    self.unidad.configure(state='normal')
+    self.cantidad.configure(state='normal')
+    self.precio.configure(state='normal')
+    self.fecha.configure(state='normal')
+    
+  def habilitaProveedor(self):
+    self.razonSocial.configure(state='normal')
+    self.ciudad.configure(state='normal')  
+    
+  def deshabilitaProductos(self):
+    self.razonSocial.configure(state='disabled')
+    self.ciudad.configure(state='disabled')
+    self.codigo.configure(state='disabled')
+    self.descripcion.configure(state='disabled')
+    self.unidad.configure(state='disabled')
+    self.cantidad.configure(state='disabled')
+    self.precio.configure(state='disabled')
+    self.fecha.configure(state='disabled')
+    
   # Operaciones con la base de datos
   def run_Query(self, query, parametros = ()):
     ''' Función para ejecutar los Querys a la base de datos '''
@@ -334,10 +355,7 @@ class Inventario:
         result = cursor.execute(query, parametros)
         conn.commit()
     return result
-
-  
-        
-        
+  #Valida si el Proveedor existe 
   def valEx_idNitProv(self,busqueda):
     '''Revision si el idNitProv Insertado existe en la tabla proveedores, requiere el valor a buscar'''
     query = '''SELECT idNitProv from Proveedores'''
@@ -346,11 +364,11 @@ class Inventario:
     for db_column in column:
       busca.append(db_column[0])
     i = busca.count(busqueda)
-    if(i<=0):
+    if(i==0):
       return False
     else :
       return True
-      
+  #Valida si existen productos de un proveedor dado
   def valEx_idNit(self,busqueda):
     '''Revision si el idNit Insertado existe en la tabla proveedores, requiere el valor a buscar'''
     query = '''SELECT idNit from Productos'''
@@ -359,35 +377,52 @@ class Inventario:
     for db_column in column:
       busca.append(db_column[0])
     i = busca.count(busqueda)
-    if(i<=0):
+    if(i==0):
       return False
     else :
       return True
-      
-    
-    
+ 
+ 
   # Funciones de botones
+  #Boton cancelar
   def cancelar(self):
-    self.codigo.delete(0,'end')
-    self.descripcion.delete(0,'end')
-    self.unidad.delete(0,'end')
-    self.cantidad.delete(0,'end')
-    self.precio.delete(0,'end')
-    self.fecha.delete(0,'end')
+    self.idNit.configure(state='normal')  
+    self.codigo.configure(state='normal')
+    tabla_TreeView = self.treeProductos.get_children()
+    for linea in tabla_TreeView:
+        self.treeProductos.delete(linea) # Límpia la filas del TreeView
+    self.limpiaCampos()
+    self.deshabilitaProductos()
+    
     
       
   def adiciona_Registro(self, event=None):
     '''Adiciona un producto a la BD si la validación es True'''
+    
     pass
   def grabarDB(self):
     '''Graba lo que se a cambiado en la interface '''
-
-  def editaTreeProveedores(self, event=None):
+    if(len(self.idNit.get())!=0):
+      self.idNit.get()
+      self.razonSocial.get()
+      self.ciudad.get()
+      
+    else: 
+      mssg.showerror(title="Error",message="No hay IdNit para grabar")
+    #VALIDA QUE EL IDNIT EXISTA EN CASO SI PREGUNTAR SI REALMENTE QUIERE MODIFICARLO, EN CASO NO RETOMAR EL VALOR ANTERIOR
+    #toca encontrar una manera de que el valor inicial del idnit se pueda revisar para modificarlo, preguntar si se puede cambiar por se primarykey
+    #TOMA LA TUPLA Y LA SOBREESCRIBE FUNCION adiciona_Registro()
+    
+  #Boton editar
+  def editaTP(self):
     ''' Edita una tupla del TreeView despues de seleccionarla'''
+    self.limpiaProductos()
+    self.idNit.configure(state = 'readonly')
     seleccion = self.treeProductos.focus()
     self.values =self.treeProductos.item(seleccion)["values"]
     self.codigo.configure(state='normal')
     self.codigo.insert(0,self.values[0])
+    self.codigo.configure(state='disabled')
     self.descripcion.configure(state='normal')
     self.descripcion.insert(0,self.values[1])
     self.unidad.configure(state='normal')
@@ -398,64 +433,66 @@ class Inventario:
     self.precio.insert(0,self.values[4])
     self.fecha.configure(state='normal')
     self.fecha.insert(0,self.values[5])
-    pass
+    
       
   def eliminaRegistro(self, event=None):
     '''Elimina un Registro en la BD'''
+    #A PARTIR DE LA SELECCION CON EL CURSOR PREGUNTAR SI ESTA SEGURO DE QUERER BORRAR
+    #EN CASO SI PREGUNTAR SI QUIERE BORRAR EL PROVEEDOR O EL UNICAMENTE PRODUCTO
+      #EN CASO DE SER PROVEEDOR BORRAR ESTE Y SUS PRODUCTOS
+    #EN CASO NO NO HACER NADA
     pass
   
-  
+  #Boton buscar
   def buscarDB(self): 
     '''Consulta con Id o Nit del proveedor'''
     tabla_TreeView = self.treeProductos.get_children()
     for linea in tabla_TreeView:
         self.treeProductos.delete(linea) # Límpia la filas del TreeView
-    self.razonSocial.delete(0,'end')
-    self.ciudad.delete(0,'end')
+    self.limpiaProveedor()
    #Validacion    
     self.param = self.idNit.get()
+    
     self.validNitProv = self.valEx_idNitProv(self.param) #Valida si existe el proevedor
     self.validNit = self.valEx_idNit(self.param) #Valida si el proveedor tiene productos
-    if(self.validNitProv == True):  
-      
-      #Seleccionando los datos de la BD
-      query1 = '''SELECT * from Proveedores WHERE idNitProv = ? '''
-      #Activa las casillas
-      self.razonSocial.configure(state='normal')
-      self.ciudad.configure(state='normal')
-      self.codigo.configure(state='normal')
-      self.descripcion.configure(state='normal')
-      self.unidad.configure(state='normal')
-      self.cantidad.configure(state='normal')
-      self.precio.configure(state='normal')
-      self.fecha.configure(state='normal')
-      #Rellena casillas de proveedor
-      db_rows = self.run_Query(query1,[self.param])
-      for row in db_rows:
-        pass
-      self.razonSocial.insert(0,row[1])
-      self.ciudad.insert(0,row[2])
+    
+    if(len(self.idNit.get())!=0):
+      if(self.validNitProv == True):  
         
-      if(self.validNit == True):
-        query2 = '''SELECT * from Productos WHERE idNit = ? '''
-        #Rellena casillas de Productos
-        db_rows = self.run_Query(query2,[self.param])
+        #Seleccionando los datos de la BD
+        query1 = '''SELECT * from Proveedores WHERE idNitProv = ? ''' 
+        #Rellena casillas de proveedor
+        db_rows = self.run_Query(query1,[self.param])
         for row in db_rows:
-          self.treeProductos.insert('',0, text = row[0], values = [row[1],row[2],row[3],row[4],row[5],row[6]])
-         # EL for ubica los valores del query en el treeview(GUI)
+          pass
+        self.idNit.configure(state='disabled')
+        self.razonSocial.configure(state='normal')
+        self.ciudad.configure(state='normal')
+        self.razonSocial.insert(0,row[1])
+        self.ciudad.insert(0,row[2])
+          
+        if(self.validNit == True):
+          query2 = '''SELECT * from Productos WHERE idNit = ? '''
+          #Rellena casillas de Productos
+          db_rows = self.run_Query(query2,[self.param])
+          for row in db_rows:
+            self.treeProductos.insert('',0, text = row[0], values = [row[1],row[2],row[3],row[4],row[5],row[6]])
+          # El for ubica los valores del query en el treeview(GUI)
 
+        else:
+          op1 = mssg.askyesno(title="Error", message="No existen productos para este proveedor, desea crear uno?")
+          if(op1 == True ):
+            self.habilitaProductos()
+          
       else:
-        print("No existnen productos")
-         #ERROR EL PROVEEDOR NO TIENE PRODUCTOS PREGUNTAR SI DESEA CREAR UNO
-         #EN CASO DE SI HABILITAR LOS CAMPOS
-         #EN CASO DE NO, NO HACER NADA
-        
+        print("No existe Proveedor")
+        op2 = mssg.askyesno(title="Error", message="No existe el proveedor, desea crear uno?")
+        if(op2== True):
+          self.habilitaProveedor()
+        else:
+          self.idNit.delete(0,'end')
     else:
-      print("No existe Proveedor")
-      #ERROR NO EXISTE EL PROEVEDOR PREGUNTAR SI DESEA CREAR UNO
-      #EN CASO DE SI HABILITAR LOS CAMPOS
-      #EN CASO DE NO, BORRAR LO ESCRITO
-  
+      mssg.showerror(title="Error",message="No hay IdNit para buscar")
 
 if __name__ == "__main__":
     app = Inventario()
