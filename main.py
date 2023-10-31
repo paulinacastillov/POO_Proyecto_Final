@@ -205,7 +205,7 @@ class Inventario:
 
     #Botón para Buscar un Proveedor
     self.btnBuscar = ttk.Button(self.frm2)
-    self.btnBuscar.configure(text='Buscar', command=lambda: (self.buscarDB(),self.validaIdNit()))
+    self.btnBuscar.configure(text='Buscar', command=lambda: (self.buscarDB()))
     self.btnBuscar.pack(side="bottom")
     self.btnBuscar.place(anchor="nw", width=70, x=140, y=10)
 
@@ -275,6 +275,7 @@ class Inventario:
                 cadena = cadena.replace(char, "")
         self.idNit.delete(0, "end")  # Eliminar todo el contenido del campo
         mssg.showerror('Atención!!', 'El Id/NIT solo puede estar compuesto por números')
+    else: return True
 
 
 # Hace falta conectarlo a los botones de busqueda o editar para que cuando se presionen
@@ -467,54 +468,55 @@ class Inventario:
   #Boton buscar
   def buscarDB(self): 
     '''Consulta con Id o Nit del proveedor'''
-    tabla_TreeView = self.treeProductos.get_children()
-    for linea in tabla_TreeView:
-        self.treeProductos.delete(linea) # Límpia la filas del TreeView
-    self.limpiaProveedor()
-   #Validacion    
-    self.param = self.idNit.get()
-    
-    self.validNitProv = self.valEx_idNitProv(self.param) #Valida si existe el proevedor
-    self.validNit = self.valEx_idNit(self.param) #Valida si el proveedor tiene productos
-    
-    if(len(self.idNit.get())!=0):
-      if(self.validNitProv == True):  
-        
-        #Seleccionando los datos de la BD
-        query1 = '''SELECT * from Proveedores WHERE idNitProv = ? ''' 
-        #Rellena casillas de proveedor
-        db_rows = self.run_Query(query1,[self.param])
-        for row in db_rows:
-          pass
-        self.idNit.configure(state='disabled')
-        self.razonSocial.configure(state='normal')
-        self.ciudad.configure(state='normal')
-        self.razonSocial.insert(0,row[1])
-        self.ciudad.insert(0,row[2])
+    if(self.validaIdNit()==True):
+      tabla_TreeView = self.treeProductos.get_children()
+      for linea in tabla_TreeView:
+          self.treeProductos.delete(linea) # Límpia la filas del TreeView
+      self.limpiaProveedor()
+      #Validacion    
+      self.param = self.idNit.get()
+      
+      self.validNitProv = self.valEx_idNitProv(self.param) #Valida si existe el proevedor
+      self.validNit = self.valEx_idNit(self.param) #Valida si el proveedor tiene productos
+      
+      if(len(self.idNit.get())!=0):
+        if(self.validNitProv == True):  
           
-        if(self.validNit == True):
-          query2 = '''SELECT * from Productos WHERE idNit = ? '''
-          #Rellena casillas de Productos
-          db_rows = self.run_Query(query2,[self.param])
+          #Seleccionando los datos de la BD
+          query1 = '''SELECT * from Proveedores WHERE idNitProv = ? ''' 
+          #Rellena casillas de proveedor
+          db_rows = self.run_Query(query1,[self.param])
           for row in db_rows:
-            self.treeProductos.insert('',0, text = row[0], values = [row[1],row[2],row[3],row[4],row[5],row[6]])
-          # El for ubica los valores del query en el treeview(GUI)
+            pass
+          self.idNit.configure(state='disabled')
+          self.razonSocial.configure(state='normal')
+          self.ciudad.configure(state='normal')
+          self.razonSocial.insert(0,row[1])
+          self.ciudad.insert(0,row[2])
+            
+          if(self.validNit == True):
+            query2 = '''SELECT * from Productos WHERE idNit = ? '''
+            #Rellena casillas de Productos
+            db_rows = self.run_Query(query2,[self.param])
+            for row in db_rows:
+              self.treeProductos.insert('',0, text = row[0], values = [row[1],row[2],row[3],row[4],row[5],row[6]])
+            # El for ubica los valores del query en el treeview(GUI)
 
+          else:
+            op1 = mssg.askyesno(title="Error", message="No existen productos para este proveedor, desea crear uno?")
+            if(op1 == True ):
+              self.habilitaProductos()
+            
         else:
-          op1 = mssg.askyesno(title="Error", message="No existen productos para este proveedor, desea crear uno?")
-          if(op1 == True ):
-            self.habilitaProductos()
-          
+          print("No existe Proveedor")
+          op2 = mssg.askyesno(title="Error", message="No existe el proveedor, desea crear uno?")
+          if(op2== True):
+            self.habilitaProveedor()
+          else:
+            self.idNit.delete(0,'end')
       else:
-        print("No existe Proveedor")
-        op2 = mssg.askyesno(title="Error", message="No existe el proveedor, desea crear uno?")
-        if(op2== True):
-          self.habilitaProveedor()
-        else:
-          self.idNit.delete(0,'end')
-    else:
-      mssg.showerror(title="Error",message="No hay IdNit para buscar")
-
+        mssg.showerror(title="Error",message="No hay IdNit para buscar")
+    else: pass
 if __name__ == "__main__":
     app = Inventario()
     app.run()
