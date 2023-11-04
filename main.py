@@ -23,7 +23,7 @@ class Inventario:
     # alto=root.winfo_screenheight() 
     # root.destroy()
     ancho=700
-    alto=800
+    alto=1000
 
     actualiza = None
 
