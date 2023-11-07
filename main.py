@@ -294,7 +294,7 @@ class Inventario:
         self.idNit.delete(0, "end")  # Eliminar todo el contenido del campo
         mssg.showerror('Atención!!', 'La cantidad debe ser un número')
 
-
+# Anclar funciones a los botones
   def validaFecha(self):
   #Valida que la longitud no sea mayor a 15 caracteres y que solo se inserten números. '''
     cadena = self.idNit.get()
