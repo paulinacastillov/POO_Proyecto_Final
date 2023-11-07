@@ -3,7 +3,7 @@
 #awa
 import tkinter as tk
 import tkinter.ttk as ttk
-from tkinter import messagebox as mssg
+from tkinter import mssg as mssg
 import sqlite3
 import os
 from Funciones import *
@@ -124,7 +124,7 @@ class Inventario:
     #Captura la cantidad del Producto
     self.cantidad = ttk.Entry(self.frm1)
     self.cantidad.configure(width=12,state= 'disabled')
-    self.cantidad.bind("<Key>", self.validaSeaNumero)
+    self.cantidad.bind("<Key>", self.validaCantidad)
     self.cantidad.place(anchor="nw", x=70, y=170)
 
     #Etiqueta precio del Producto
@@ -211,7 +211,13 @@ class Inventario:
 
     # Botón para Guardar los datos
     self.btnGrabar = ttk.Button(self.frm2)
-    self.btnGrabar.configure(text='Grabar',command=self.grabarDB)
+    self.btnGrabar.configure(text='Grabar',command=lambda: (self.validaCantidad(),
+                                                            self.validaPrecio(), 
+                                                            self.validaUnidad(),
+                                                            self.grabarDB(),
+                                                            self.validaDescripcion()
+                                                            #,self.validaFecha()
+                                                            ))
     self.btnGrabar.pack(side="bottom")
     self.btnGrabar.place(anchor="nw", width=70, x=210, y=10)
 
@@ -283,37 +289,90 @@ class Inventario:
 
 # Este se puede usar para validad cantidad y precio porque basicamente es lo mismo, en caso contrario cambiar
 # a funciones separadass pero no lo veo necesario por ahora. Charlar
-  def validaSeaNumero(self):
-  #Valida que la longitud no sea mayor a 15 caracteres y que solo se inserten números. '''
-    cadena = self.idNit.get()
-    if not cadena.isdigit() and cadena:
-        # Buscar caracteres no válidos y eliminarlos
-        for char in cadena:
-            if not char.isdigit():
-                cadena = cadena.replace(char, "")
-        self.idNit.delete(0, "end")  # Eliminar todo el contenido del campo
-        mssg.showerror('Atención!!', 'La cantidad debe ser un número')
 
-# Anclar funciones a los botones
+#Validación de cantidad
+  def validaCantidad(self):
+    # Validar
+    cadena = self.cantidad.get()
+    try:
+        valor = float(cadena)
+        # Validación exitosa, es un número double
+    except ValueError:
+        # Error, no es un número double
+        mssg.showerror('Atención!!', 'La cantidad es inválida')
+        # Limpia el campo
+        self.cantidad.delete(0, "end")
+
+
+#Validación de precio
+  def validaPrecio(self):
+    valor_original = self.precio.get()
+    # Valida que sea un número double.
+    cadena = self.precio.get()
+    try:
+        valor = float(cadena)
+        # Validación exitosa, es un número double
+    except ValueError:
+        # Error, no es un número double
+        mssg.showerror('Atención!!', 'El precio es inválido')
+        # Limpia el campo
+        self.precio.delete(0, "end")
+
+#Validar Unidad
+  def validaUnidad(self):
+    cadena = self.unidad.get()
+
+    if not cadena.strip():  # Verifica si la cadena está vacía o compuesta solo por espacios en blanco
+        mssg.showerror('Error', 'El campo de unidad no puede estar vacío o contener solo espacios en blanco')
+        self.unidad.delete(0,"end")
+    elif len(cadena) > 10:
+        mssg.showerror('Error', 'El campo de unidad no puede superar los 10 caracteres')
+        self.unidad.delete(0,"end")
+
+#Validar Descripción        
+  def validaDescripcion(self):
+    cadena = self.descripcion.get()
+    if not cadena.strip():
+        mssg.showerror('Error', 'El campo de descripción no puede estar vacío o contener solo espacios en blanco')
+        self.descripcion.delete(0,"end")
+
+#Valida Fecha
   def validaFecha(self):
-  #Valida que la longitud no sea mayor a 15 caracteres y que solo se inserten números. '''
-    cadena = self.idNit.get()
+  #Valida fecha.
+    cadena = self.fecha.get()
 
     if not datetime.datetime.strptime(cadena, "%d-%m-%y").is_valid():
        mssg.showerror('Atención!', 'La fecha debe tener formato dd/mm/aaaa además de ser valida')
+       self.fecha.delete(0,"end")
 
-
-
-
-
- # def id_valido(self, event):
- #       ''' Valida que solo se inserten números en el campo y muestra un mensaje de alerta en caso de caracteres inválidos '''
- #       caracteres = self.idNit.get()
- #       if not caracteres.isdigit():
- #           mssg.showerror('Atención!!', 'El Id/NIT solo puede estar compuesto por números.')
- #           self.idNit.delete(0, "end")  # Eliminar todo el contenido
-
+  # def validaFecha(self):
+  #     fecha_str = self.fecha.get()
       
+  #     # Verificar el formato de la fecha (dd-mm-aaa)
+  #     fecha_parts = fecha_str.split('-')
+  #     if len(fecha_parts) != 3:
+  #         mssg.showerror("Error", "El formato de la fecha es incorrecto.")
+  #         return
+
+  #     try:
+  #         dia, mes, año = map(int, fecha_parts)
+
+  #         if not (1 <= mes <= 12):
+  #             mssg.showerror("Error", "La fecha es inválida.")
+  #             return
+
+  #         if mes in [4, 6, 9, 11]:
+  #             max_dia = 30
+  #         elif mes == 2:
+  #             max_dia = 29 if (año % 4 == 0 and (año % 100 != 0 or año % 400 == 0)) else 28
+  #         else:
+  #             max_dia = 31
+
+  #         if not (1 <= dia <= max_dia):
+  #             mssg.showerror("Error", "La fecha es inválida.")
+  #     except ValueError:
+  #         mssg.showerror("Error", "La fecha es inválida.")
+        
 
   #Rutina de limpieza de datos
   def limpiaCampos(self):
