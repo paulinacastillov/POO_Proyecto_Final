@@ -8,6 +8,7 @@ import sqlite3
 import os
 from Funciones import *
 import datetime
+import pandas as pd
 
 
 class Inventario:
@@ -124,7 +125,7 @@ class Inventario:
     #Captura la cantidad del Producto
     self.cantidad = ttk.Entry(self.frm1)
     self.cantidad.configure(width=12,state= 'disabled')
-    self.cantidad.bind("<Key>", self.validaCantidad)
+    #self.cantidad.bind("<Key>", self.validaCantidad)
     self.cantidad.place(anchor="nw", x=70, y=170)
 
     #Etiqueta precio del Producto
@@ -317,6 +318,7 @@ class Inventario:
         mssg.showerror('Atención!!', 'El precio es inválido')
         # Limpia el campo
         self.precio.delete(0, "end")
+    
 
 #Validar Unidad
   def validaUnidad(self):
@@ -341,7 +343,7 @@ class Inventario:
    #Valida fecha.
     cadena = self.fecha.get()
 
-    if not datetime.datetime.strptime(cadena, "%d-%m-%y").is_valid():
+    if not datetime.datetime.strptime(pd.to_datetime(cadena) ,"%y/%m/%d").is_valid():
       mssg.showerror('Atención!', 'La fecha debe tener formato dd/mm/aaaa además de ser valida')
       self.fecha.delete(0,"end")
 
