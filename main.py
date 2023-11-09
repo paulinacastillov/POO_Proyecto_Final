@@ -23,14 +23,14 @@ class Inventario:
     # alto=root.winfo_screenheight() 
     # root.destroy()
     ancho=700
-    alto=1000
+    alto=800
 
-    actualiza = None
+    Inventario.actualiza = None
 
     # Crea ventana principal
     self.win = tk.Tk() 
     self.win.geometry(f"{int(ancho/30)}x{int(alto/30)}")
-   # self.win.iconbitmap(self.path + r'/imagenes/dt.ico')
+    self.win.iconbitmap(self.path + r'/imagenes/dt.ico')
     self.win.resizable(True, True)
     self.win.title("Manejo de Proveedores") 
 
@@ -214,9 +214,9 @@ class Inventario:
     self.btnGrabar.configure(text='Grabar',command=lambda: (self.validaCantidad(),
                                                             self.validaPrecio(), 
                                                             self.validaUnidad(),
-                                                            self.grabarDB(),
                                                             self.validaDescripcion(),
-                                                            self.validaFecha()
+                                                            self.validaFecha(),
+                                                            self.grabarDB()
                                                             ))
     self.btnGrabar.pack(side="bottom")
     self.btnGrabar.place(anchor="nw", width=70, x=210, y=10)
@@ -337,42 +337,33 @@ class Inventario:
         self.descripcion.delete(0,"end")
 
 # #Valida Fecha
-#   def validaFecha(self):
-#   #Valida fecha.
-#     cadena = self.fecha.get()
-
-#     if not datetime.datetime.strptime(cadena, "%d-%m-%y").is_valid():
-#        mssg.showerror('Atención!', 'La fecha debe tener formato dd/mm/aaaa además de ser valida')
-#        self.fecha.delete(0,"end")
-
   def validaFecha(self):
-      fecha_str = self.fecha.get()
+   #Valida fecha.
+    cadena = self.fecha.get()
+
+    if not datetime.datetime.strptime(cadena, "%d-%m-%y").is_valid():
+      mssg.showerror('Atención!', 'La fecha debe tener formato dd/mm/aaaa además de ser valida')
+      self.fecha.delete(0,"end")
+
+ # def validaFecha(self):
+  #Valida que la longitud no sea mayor a 15 caracteres y que solo se inserten números. '''
+  #  cadena = self.idNit.get()
+
+   # if not datetime.datetime.strptime(cadena, "%d-%m-%y").is_valid():
+    #   mssg.showerror('Atención!', 'La fecha debe tener formato dd/mm/aaaa además de ser valida')
+
+
+
+
+
+ # def id_valido(self, event):
+ #       ''' Valida que solo se inserten números en el campo y muestra un mensaje de alerta en caso de caracteres inválidos '''
+ #       caracteres = self.idNit.get()
+ #       if not caracteres.isdigit():
+ #           mssg.showerror('Atención!!', 'El Id/NIT solo puede estar compuesto por números.')
+ #           self.idNit.delete(0, "end")  # Eliminar todo el contenido
+
       
-      # Verificar el formato de la fecha (dd-mm-aaa)
-      fecha_parts = fecha_str.split('-')
-      if len(fecha_parts) != 3:
-          mssg.showerror("Error", "El formato de la fecha es incorrecto.")
-          return
-
-      try:
-          dia, mes, año = map(int, fecha_parts)
-
-          if not (1 <= mes <= 12):
-              mssg.showerror("Error", "La fecha es inválida.")
-              return
-
-          if mes in [4, 6, 9, 11]:
-              max_dia = 30
-          elif mes == 2:
-              max_dia = 29 if (año % 4 == 0 and (año % 100 != 0 or año % 400 == 0)) else 28
-          else:
-              max_dia = 31
-
-          if not (1 <= dia <= max_dia):
-              mssg.showerror("Error", "La fecha es inválida.")
-      except ValueError:
-          mssg.showerror("Error", "La fecha es inválida.")
-        
 
   #Rutina de limpieza de datos
   def limpiaCampos(self):
@@ -463,12 +454,34 @@ class Inventario:
     else :
       return True
  
- 
+  def cambioProveedores(self):
+    '''Valida los cambios en los campos del Proveedor, si hay cambios retorna False'''
+    if(self.comparaRazonSocial!=self.razonSocial.get()):
+      return False
+    elif(self.comparaCiudad!=self.ciudad.get()):
+      return False
+   
+  def cambioProductos(self):
+    '''Valida los cambios en los campos del Producto, si hay cambios retorna False'''
+    if(self.comparaDescripcion!=self.descripcion.get()):
+      return False
+    elif(self.comparaUnidad!=self.unidad.get()):
+      return False
+    elif(self.comparaCantidad!=self.cantidad.get()):
+      return False
+    elif(self.comparaPrecio!=self.precio.get()):
+      return False
+    elif(self.comparaFecha!=self.fecha.get()):
+      return False     
+
+
   # Funciones de botones
   #Boton cancelar
   def cancelar(self):
     self.idNit.configure(state='normal')  
     self.codigo.configure(state='normal')
+    self.habilitaProveedor()
+    self.limpiaProveedor()
     tabla_TreeView = self.treeProductos.get_children()
     for linea in tabla_TreeView:
         self.treeProductos.delete(linea) # Límpia la filas del TreeView
@@ -477,19 +490,63 @@ class Inventario:
     
     
       
-  def adiciona_Registro(self, event=None):
-    '''Adiciona un producto a la BD si la validación es True'''
+  def actualiza_Proveedor(self):
+    query = '''UPDATE Proveedores SET Razon_Social = ?, Ciudad = ? WHERE idNitProv = ?'''
+    param = [self.razonSocial.get(),self.ciudad.get(),self.idNit.get()]
+    self.run_Query(query,param)
+  def nuevo_Proveedor(self):
+    query = '''INSERT INTO Proveedores VALUES(?,?,?) '''
+    param = [self.idNit.get(),self.razonSocial.get(),self.ciudad.get()]
+    self.run_Query(query,param)
     
-    pass
+    
+    
+  def actualiza_Producto(self):
+    if(len(self.emptyCodigo)!=0):
+      query = '''INSERT INTO Productos VALUES(?,?,?,?,?,?,?)'''
+      param= [self.idNit.get(),self.codigo.get(),self.descripcion.get(),self.unidad.get(),self.cantidad.get(),self.precio.get(),self.fecha.get()]
+    else:
+      query= '''UPDATE Productos SET Descripcion = ?, Und = ?, Cantidad = ?, Precio = ?, Fecha = ? WHERE Codigo = ?'''
+      param= [self.descripcion.get(),self.unidad.get(),self.cantidad.get(),self.precio.get(),self.fecha.get(),self.codigo.get()]
+      
+    self.run_Query(query,param)
+  
+  
   def grabarDB(self):
     '''Graba lo que se a cambiado en la interface '''
-    if(len(self.idNit.get())!=0):
-      self.idNit.get()
-      self.razonSocial.get()
-      self.ciudad.get()
-      
-    else: 
-      mssg.showerror(title="Error",message="No hay IdNit para grabar")
+    #Proveedores
+    if(self.cambioProveedores()==False):
+      if(mssg.askyesno(title='Grabar', message='Se realizaron cambios en el Proveedor, desea continuar?')==True):
+        #Nuevo proveedor
+        if(self.nuevoProveedor==True):
+          self.nuevo_Proveedor()
+          mssg.showinfo(title='Sucsess',message='Se creo el nuevo proveedor correctamente') 
+          self.nuevoProveedor == False
+        else:
+          self.actualiza_Proveedor()
+          mssg.showinfo(title='Sucsess',message='Se actualizo la informacion del Proveedor correctamente')
+      else:
+        self.limpiaProveedor()
+
+     
+    #Productos 
+    if(len(self.codigo.get())!=0):
+      if(self.cambioProductos()==False):
+        if(mssg.askyesno(title='Grabar', message='Se realizaron cambios en el Producto, desea continuar?')==True):   
+          if(self.nuevoProducto==True):
+            self.actualiza_Producto()
+            mssg.showinfo(title='Succes!',message='Se creo el nuevo producto correctamente')
+            self.nuevoProducto==False
+            self.actualizaTreeview()
+          else: 
+            self.actualiza_Producto()
+            mssg.showinfo(title='Sucsess',message='Se actualizo la informacion del Producto correctamente')
+            self.actualizaTreeview()
+          
+        
+        else:
+          self.limpiaProductos()
+
     #VALIDA QUE EL IDNIT EXISTA EN CASO SI PREGUNTAR SI REALMENTE QUIERE MODIFICARLO, EN CASO NO RETOMAR EL VALOR ANTERIOR
     #toca encontrar una manera de que el valor inicial del idnit se pueda revisar para modificarlo, preguntar si se puede cambiar por se primarykey
     #TOMA LA TUPLA Y LA SOBREESCRIBE FUNCION adiciona_Registro()
@@ -497,25 +554,39 @@ class Inventario:
   #Boton editar
   def editaTP(self):
     ''' Edita una tupla del TreeView despues de seleccionarla'''
+    #Para revisar si esta vacio el campo en grabar
+    self.emptyidNit = self.idNit.get()
+    self.emptyCodigo = self.codigo.get()
+    self.codigo.configure(state='normal')
     self.limpiaProductos()
-    self.idNit.configure(state = 'readonly')
+    self.habilitaProveedor() 
+    self.habilitaProductos()
+    
     seleccion = self.treeProductos.focus()
     self.values =self.treeProductos.item(seleccion)["values"]
-    self.codigo.configure(state='normal')
-    self.codigo.insert(0,self.values[0])
-    self.codigo.configure(state='disabled')
-    self.descripcion.configure(state='normal')
-    self.descripcion.insert(0,self.values[1])
-    self.unidad.configure(state='normal')
-    self.unidad.insert(0,self.values[2])
-    self.cantidad.configure(state='normal')
-    self.cantidad.insert(0,self.values[3])
-    self.precio.configure(state='normal')
-    self.precio.insert(0,self.values[4])
-    self.fecha.configure(state='normal')
-    self.fecha.insert(0,self.values[5])
-    
+    if(len(seleccion)!=0):
+      self.codigo.insert(0,self.values[0])
+      self.descripcion.insert(0,self.values[1]) 
+      self.unidad.insert(0,self.values[2])
+      self.cantidad.insert(0,self.values[3])
+      self.precio.insert(0,self.values[4])
+      self.fecha.insert(0,self.values[5])
+      self.codigo.configure(state='disabled')
+      self.nuevoProducto = False
+    else:
+      self.codigo.configure(state='normal')
       
+    self.idNit.configure(state = 'readonly')
+    
+    self.comparaRazonSocial = self.razonSocial.get()
+    self.comparaCiudad = self.ciudad.get()
+    self.comparaDescripcion = self.descripcion.get()
+    self.comparaUnidad = self.unidad.get()
+    self.comparaCantidad = self.cantidad.get()
+    self.comparaPrecio = self.precio.get()
+    self.comparaFecha = self.fecha.get()
+
+    
   def eliminaRegistro(self, event=None):
     '''Elimina un Registro en la BD'''
     #A PARTIR DE LA SELECCION CON EL CURSOR PREGUNTAR SI ESTA SEGURO DE QUERER BORRAR
@@ -524,23 +595,33 @@ class Inventario:
     #EN CASO NO NO HACER NADA
     pass
   
-  #Boton buscar
+  def actualizaTreeview(self):
+    tabla_TreeView = self.treeProductos.get_children()
+    for linea in tabla_TreeView:
+      self.treeProductos.delete(linea) # Límpia la filas del TreeView
+    query2 = '''SELECT * from Productos WHERE idNit = ? '''
+    #Rellena casillas de Productos
+    db_rows = self.run_Query(query2,[self.param])
+    for row in db_rows:
+      self.treeProductos.insert('',0, text = row[0], values = [row[1],row[2],row[3],row[4],row[5],row[6]])
+      # El for ubica los valores del query en el treeview(GUI)
+      
+  #Boton buscar  
   def buscarDB(self): 
     '''Consulta con Id o Nit del proveedor'''
     if(self.validaIdNit()==True):
       tabla_TreeView = self.treeProductos.get_children()
       for linea in tabla_TreeView:
           self.treeProductos.delete(linea) # Límpia la filas del TreeView
-      self.limpiaProveedor()
+      self.comparaRazonSocial = self.razonSocial.get()
+      self.comparaCiudad = self.ciudad.get()
       #Validacion    
       self.param = self.idNit.get()
-      
       self.validNitProv = self.valEx_idNitProv(self.param) #Valida si existe el proevedor
       self.validNit = self.valEx_idNit(self.param) #Valida si el proveedor tiene productos
       
       if(len(self.idNit.get())!=0):
         if(self.validNitProv == True):  
-          
           #Seleccionando los datos de la BD
           query1 = '''SELECT * from Proveedores WHERE idNitProv = ? ''' 
           #Rellena casillas de proveedor
@@ -550,9 +631,12 @@ class Inventario:
           self.idNit.configure(state='disabled')
           self.razonSocial.configure(state='normal')
           self.ciudad.configure(state='normal')
+          self.limpiaProveedor()
           self.razonSocial.insert(0,row[1])
           self.ciudad.insert(0,row[2])
-            
+          self.razonSocial.configure(state='disabled')
+          self.ciudad.configure(state='disabled')
+          self.nuevoProveedor = False 
           if(self.validNit == True):
             query2 = '''SELECT * from Productos WHERE idNit = ? '''
             #Rellena casillas de Productos
@@ -560,22 +644,36 @@ class Inventario:
             for row in db_rows:
               self.treeProductos.insert('',0, text = row[0], values = [row[1],row[2],row[3],row[4],row[5],row[6]])
             # El for ubica los valores del query en el treeview(GUI)
-
           else:
-            op1 = mssg.askyesno(title="Error", message="No existen productos para este proveedor, desea crear uno?")
-            if(op1 == True ):
+            
+            if(mssg.askyesno(title="Error", message="No existen productos para este proveedor, desea crear uno?") == True ):
+              self.nuevoProducto = True
               self.habilitaProductos()
+              self.comparaRazonSocial = 0
+              self.comparaCiudad = 0
+              self.comparaDescripcion = 0
+              self.comparaUnidad = 0
+              self.comparaCantidad = 0
+              self.comparaPrecio = 0
+              self.comparaFecha = 0
+            else:
+              self.nuevoProducto = False
+
             
         else:
-          print("No existe Proveedor")
           op2 = mssg.askyesno(title="Error", message="No existe el proveedor, desea crear uno?")
           if(op2== True):
             self.habilitaProveedor()
+            self.comparaIdNit=self.idNit.get()
+            self.nuevoProveedor = True
           else:
             self.idNit.delete(0,'end')
       else:
         mssg.showerror(title="Error",message="No hay IdNit para buscar")
     else: pass
+    self.emptyCodigo = self.codigo.get()
+   
+    
 if __name__ == "__main__":
     app = Inventario()
     app.run()
