@@ -296,13 +296,15 @@ class Inventario:
     cadena = self.cantidad.get()
     try:
         valor = float(cadena)
+        self.errorCampos=False
         # Validación exitosa, es un número double
     except ValueError:
         # Error, no es un número double
         mssg.showerror('Atención!!', 'La cantidad es inválida')
+        self.errorCampos=True
         # Limpia el campo
         self.cantidad.delete(0, "end")
-
+    
 
 #Validación de precio
   def validaPrecio(self):
@@ -311,17 +313,18 @@ class Inventario:
     cadena = self.precio.get()
     try:
         valor = float(cadena)
+        self.errorCampos=False
         # Validación exitosa, es un número double
     except ValueError:
         # Error, no es un número double
         mssg.showerror('Atención!!', 'El precio es inválido')
+        self.errorCampos=True
         # Limpia el campo
         self.precio.delete(0, "end")
 
 #Validar Unidad
   def validaUnidad(self):
     cadena = self.unidad.get()
-
     if not cadena.strip():  # Verifica si la cadena está vacía o compuesta solo por espacios en blanco
         mssg.showerror('Error', 'El campo de unidad no puede estar vacío o contener solo espacios en blanco')
         self.unidad.delete(0,"end")
@@ -334,7 +337,10 @@ class Inventario:
     cadena = self.descripcion.get()
     if not cadena.strip():
         mssg.showerror('Error', 'El campo de descripción no puede estar vacío o contener solo espacios en blanco')
+        self.errorCampos=True
         self.descripcion.delete(0,"end")
+    else: 
+      self.errorCampos=False
 
 # #Valida Fecha
   def validaFecha(self):
