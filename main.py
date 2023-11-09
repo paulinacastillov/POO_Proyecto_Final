@@ -214,9 +214,9 @@ class Inventario:
     self.btnGrabar.configure(text='Grabar',command=lambda: (self.validaCantidad(),
                                                             self.validaPrecio(), 
                                                             self.validaUnidad(),
-                                                            self.grabarDB(),
                                                             self.validaDescripcion(),
-                                                            self.validaFecha()
+                                                            self.validaFecha(),
+                                                            self.grabarDB()
                                                             ))
     self.btnGrabar.pack(side="bottom")
     self.btnGrabar.place(anchor="nw", width=70, x=210, y=10)
@@ -346,33 +346,24 @@ class Inventario:
 #        self.fecha.delete(0,"end")
 
   def validaFecha(self):
-      fecha_str = self.fecha.get()
+  #Valida que la longitud no sea mayor a 15 caracteres y que solo se inserten números. '''
+    cadena = self.idNit.get()
+
+    if not datetime.datetime.strptime(cadena, "%d-%m-%y").is_valid():
+       mssg.showerror('Atención!', 'La fecha debe tener formato dd/mm/aaaa además de ser valida')
+
+
+
+
+
+ # def id_valido(self, event):
+ #       ''' Valida que solo se inserten números en el campo y muestra un mensaje de alerta en caso de caracteres inválidos '''
+ #       caracteres = self.idNit.get()
+ #       if not caracteres.isdigit():
+ #           mssg.showerror('Atención!!', 'El Id/NIT solo puede estar compuesto por números.')
+ #           self.idNit.delete(0, "end")  # Eliminar todo el contenido
+
       
-      # Verificar el formato de la fecha (dd-mm-aaa)
-      fecha_parts = fecha_str.split('-')
-      if len(fecha_parts) != 3:
-          mssg.showerror("Error", "El formato de la fecha es incorrecto.")
-          return
-
-      try:
-          dia, mes, año = map(int, fecha_parts)
-
-          if not (1 <= mes <= 12):
-              mssg.showerror("Error", "La fecha es inválida.")
-              return
-
-          if mes in [4, 6, 9, 11]:
-              max_dia = 30
-          elif mes == 2:
-              max_dia = 29 if (año % 4 == 0 and (año % 100 != 0 or año % 400 == 0)) else 28
-          else:
-              max_dia = 31
-
-          if not (1 <= dia <= max_dia):
-              mssg.showerror("Error", "La fecha es inválida.")
-      except ValueError:
-          mssg.showerror("Error", "La fecha es inválida.")
-        
 
   #Rutina de limpieza de datos
   def limpiaCampos(self):
