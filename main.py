@@ -337,20 +337,20 @@ class Inventario:
         self.descripcion.delete(0,"end")
 
 # #Valida Fecha
-#   def validaFecha(self):
-#   #Valida fecha.
-#     cadena = self.fecha.get()
-
-#     if not datetime.datetime.strptime(cadena, "%d-%m-%y").is_valid():
-#        mssg.showerror('Atención!', 'La fecha debe tener formato dd/mm/aaaa además de ser valida')
-#        self.fecha.delete(0,"end")
-
   def validaFecha(self):
-  #Valida que la longitud no sea mayor a 15 caracteres y que solo se inserten números. '''
-    cadena = self.idNit.get()
+   #Valida fecha.
+    cadena = self.fecha.get()
 
     if not datetime.datetime.strptime(cadena, "%d-%m-%y").is_valid():
-       mssg.showerror('Atención!', 'La fecha debe tener formato dd/mm/aaaa además de ser valida')
+      mssg.showerror('Atención!', 'La fecha debe tener formato dd/mm/aaaa además de ser valida')
+      self.fecha.delete(0,"end")
+
+ # def validaFecha(self):
+  #Valida que la longitud no sea mayor a 15 caracteres y que solo se inserten números. '''
+  #  cadena = self.idNit.get()
+
+   # if not datetime.datetime.strptime(cadena, "%d-%m-%y").is_valid():
+    #   mssg.showerror('Atención!', 'La fecha debe tener formato dd/mm/aaaa además de ser valida')
 
 
 
@@ -557,7 +557,6 @@ class Inventario:
     #Para revisar si esta vacio el campo en grabar
     self.emptyidNit = self.idNit.get()
     self.emptyCodigo = self.codigo.get()
-    print(self.emptyidNit)
     self.codigo.configure(state='normal')
     self.limpiaProductos()
     self.habilitaProveedor() 
@@ -662,7 +661,6 @@ class Inventario:
 
             
         else:
-          print("No existe Proveedor")
           op2 = mssg.askyesno(title="Error", message="No existe el proveedor, desea crear uno?")
           if(op2== True):
             self.habilitaProveedor()
