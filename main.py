@@ -520,42 +520,42 @@ class Inventario:
   
   def grabarDB(self):
     '''Graba lo que se a cambiado en la interface '''
-    #Proveedores
-    if(self.cambioProveedores()==False):
-      if(mssg.askyesno(title='Grabar', message='Se realizaron cambios en el Proveedor, desea continuar?')==True):
-        #Nuevo proveedor
-        if(self.nuevoProveedor==True):
-          self.nuevo_Proveedor()
-          mssg.showinfo(title='Sucsess',message='Se creo el nuevo proveedor correctamente') 
-          self.nuevoProveedor == False
+    #Revisa si hay errores en los campos
+    if(self.errorCampos==False):
+      #Proveedores
+      if(self.cambioProveedores()==False):
+        if(mssg.askyesno(title='Grabar', message='Se realizaron cambios en el Proveedor, desea continuar?')==True):
+          #Nuevo proveedor
+          if(self.nuevoProveedor==True):
+            self.nuevo_Proveedor()
+            mssg.showinfo(title='Sucsess',message='Se creo el nuevo proveedor correctamente') 
+            self.nuevoProveedor == False
+          else:
+            self.actualiza_Proveedor()
+            mssg.showinfo(title='Sucsess',message='Se actualizo la informacion del Proveedor correctamente')
         else:
-          self.actualiza_Proveedor()
-          mssg.showinfo(title='Sucsess',message='Se actualizo la informacion del Proveedor correctamente')
-      else:
-        self.limpiaProveedor()
+          self.limpiaProveedor()
 
-     
-    #Productos 
-    if(len(self.codigo.get())!=0):
-      if(self.cambioProductos()==False):
-        if(mssg.askyesno(title='Grabar', message='Se realizaron cambios en el Producto, desea continuar?')==True):   
-          if(self.nuevoProducto==True):
-            self.actualiza_Producto()
-            mssg.showinfo(title='Succes!',message='Se creo el nuevo producto correctamente')
-            self.nuevoProducto==False
-            self.actualizaTreeview()
-          else: 
-            self.actualiza_Producto()
-            mssg.showinfo(title='Sucsess',message='Se actualizo la informacion del Producto correctamente')
-            self.actualizaTreeview()
+      
+      #Productos 
+      if(len(self.codigo.get())!=0):
+        if(self.cambioProductos()==False):
+          if(mssg.askyesno(title='Grabar', message='Se realizaron cambios en el Producto, desea continuar?')==True):   
+            if(self.nuevoProducto==True):
+              self.actualiza_Producto()
+              mssg.showinfo(title='Succes!',message='Se creo el nuevo producto correctamente')
+              self.nuevoProducto==False
+              self.actualizaTreeview()
+            else: 
+              self.actualiza_Producto()
+              mssg.showinfo(title='Sucsess',message='Se actualizo la informacion del Producto correctamente')
+              self.actualizaTreeview()
+            
           
-        
-        else:
-          self.limpiaProductos()
-
-    #VALIDA QUE EL IDNIT EXISTA EN CASO SI PREGUNTAR SI REALMENTE QUIERE MODIFICARLO, EN CASO NO RETOMAR EL VALOR ANTERIOR
-    #toca encontrar una manera de que el valor inicial del idnit se pueda revisar para modificarlo, preguntar si se puede cambiar por se primarykey
-    #TOMA LA TUPLA Y LA SOBREESCRIBE FUNCION adiciona_Registro()
+          else:
+            self.limpiaProductos()
+    else:
+      mssg.showerror(title='Error',message='No se realizo el guardado de datos') 
     
   #Boton editar
   def editaTP(self):
