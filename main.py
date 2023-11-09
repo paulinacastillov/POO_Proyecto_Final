@@ -328,9 +328,13 @@ class Inventario:
     if not cadena.strip():  # Verifica si la cadena está vacía o compuesta solo por espacios en blanco
         mssg.showerror('Error', 'El campo de unidad no puede estar vacío o contener solo espacios en blanco')
         self.unidad.delete(0,"end")
+        self.errorCampos=True
     elif len(cadena) > 10:
         mssg.showerror('Error', 'El campo de unidad no puede superar los 10 caracteres')
         self.unidad.delete(0,"end")
+        self.errorCampos=True
+    else:
+      self.errorCampos=False
 
 #Validar Descripción        
   def validaDescripcion(self):
@@ -358,18 +362,13 @@ class Inventario:
    # if not datetime.datetime.strptime(cadena, "%d-%m-%y").is_valid():
     #   mssg.showerror('Atención!', 'La fecha debe tener formato dd/mm/aaaa además de ser valida')
 
-
-
-
-
  # def id_valido(self, event):
  #       ''' Valida que solo se inserten números en el campo y muestra un mensaje de alerta en caso de caracteres inválidos '''
  #       caracteres = self.idNit.get()
  #       if not caracteres.isdigit():
  #           mssg.showerror('Atención!!', 'El Id/NIT solo puede estar compuesto por números.')
  #           self.idNit.delete(0, "end")  # Eliminar todo el contenido
-
-      
+  
 
   #Rutina de limpieza de datos
   def limpiaCampos(self):
@@ -427,6 +426,8 @@ class Inventario:
     
   # Operaciones con la base de datos
   def run_Query(self, query, parametros = ()):
+    
+  
     ''' Función para ejecutar los Querys a la base de datos '''
     with sqlite3.connect(self.db_name) as conn:
         cursor = conn.cursor()
@@ -460,6 +461,9 @@ class Inventario:
     else :
       return True
  
+ 
+ 
+#Funciones validacion
   def cambioProveedores(self):
     '''Valida los cambios en los campos del Proveedor, si hay cambios retorna False'''
     if(self.comparaRazonSocial!=self.razonSocial.get()):
@@ -480,33 +484,16 @@ class Inventario:
     elif(self.comparaFecha!=self.fecha.get()):
       return False     
 
-
-  # Funciones de botones
-  #Boton cancelar
-  def cancelar(self):
-    self.idNit.configure(state='normal')  
-    self.codigo.configure(state='normal')
-    self.habilitaProveedor()
-    self.limpiaProveedor()
-    tabla_TreeView = self.treeProductos.get_children()
-    for linea in tabla_TreeView:
-        self.treeProductos.delete(linea) # Límpia la filas del TreeView
-    self.limpiaCampos()
-    self.deshabilitaProductos()
-    
-    
-      
   def actualiza_Proveedor(self):
     query = '''UPDATE Proveedores SET Razon_Social = ?, Ciudad = ? WHERE idNitProv = ?'''
     param = [self.razonSocial.get(),self.ciudad.get(),self.idNit.get()]
     self.run_Query(query,param)
+  
   def nuevo_Proveedor(self):
     query = '''INSERT INTO Proveedores VALUES(?,?,?) '''
     param = [self.idNit.get(),self.razonSocial.get(),self.ciudad.get()]
     self.run_Query(query,param)
-    
-    
-    
+ 
   def actualiza_Producto(self):
     if(len(self.emptyCodigo)!=0):
       query = '''INSERT INTO Productos VALUES(?,?,?,?,?,?,?)'''
@@ -517,7 +504,31 @@ class Inventario:
       
     self.run_Query(query,param)
   
-  
+  def actualizaTreeview(self):
+    tabla_TreeView = self.treeProductos.get_children()
+    for linea in tabla_TreeView:
+      self.treeProductos.delete(linea) # Límpia la filas del TreeView
+    query2 = '''SELECT * from Productos WHERE idNit = ? '''
+    #Rellena casillas de Productos
+    db_rows = self.run_Query(query2,[self.param])
+    for row in db_rows:
+      self.treeProductos.insert('',0, text = row[0], values = [row[1],row[2],row[3],row[4],row[5],row[6]])
+      # El for ubica los valores del query en el treeview(GUI)
+    
+  # Funciones de botones
+#Boton cancelar
+  def cancelar(self):
+    self.idNit.configure(state='normal')  
+    self.codigo.configure(state='normal')
+    self.habilitaProveedor()
+    self.limpiaProveedor()
+    tabla_TreeView = self.treeProductos.get_children()
+    for linea in tabla_TreeView:
+        self.treeProductos.delete(linea) # Límpia la filas del TreeView
+    self.limpiaCampos()
+    self.deshabilitaProductos()
+       
+#Boton grabar 
   def grabarDB(self):
     '''Graba lo que se a cambiado en la interface '''
     #Revisa si hay errores en los campos
@@ -557,7 +568,7 @@ class Inventario:
     else:
       mssg.showerror(title='Error',message='No se realizo el guardado de datos') 
     
-  #Boton editar
+#Boton editar
   def editaTP(self):
     ''' Edita una tupla del TreeView despues de seleccionarla'''
     #Para revisar si esta vacio el campo en grabar
@@ -592,7 +603,7 @@ class Inventario:
     self.comparaPrecio = self.precio.get()
     self.comparaFecha = self.fecha.get()
 
-    
+#Boton eliminar
   def eliminaRegistro(self, event=None):
     '''Elimina un Registro en la BD'''
     #A PARTIR DE LA SELECCION CON EL CURSOR PREGUNTAR SI ESTA SEGURO DE QUERER BORRAR
@@ -601,17 +612,6 @@ class Inventario:
     #EN CASO NO NO HACER NADA
     pass
   
-  def actualizaTreeview(self):
-    tabla_TreeView = self.treeProductos.get_children()
-    for linea in tabla_TreeView:
-      self.treeProductos.delete(linea) # Límpia la filas del TreeView
-    query2 = '''SELECT * from Productos WHERE idNit = ? '''
-    #Rellena casillas de Productos
-    db_rows = self.run_Query(query2,[self.param])
-    for row in db_rows:
-      self.treeProductos.insert('',0, text = row[0], values = [row[1],row[2],row[3],row[4],row[5],row[6]])
-      # El for ubica los valores del query en el treeview(GUI)
-      
   #Boton buscar  
   def buscarDB(self): 
     '''Consulta con Id o Nit del proveedor'''
