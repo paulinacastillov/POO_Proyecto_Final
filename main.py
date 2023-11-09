@@ -124,7 +124,7 @@ class Inventario:
     #Captura la cantidad del Producto
     self.cantidad = ttk.Entry(self.frm1)
     self.cantidad.configure(width=12,state= 'disabled')
-    self.cantidad.bind("<Key>", self.validaCantidad)
+    #self.cantidad.bind("<Key>", self.validaCantidad)
     self.cantidad.place(anchor="nw", x=70, y=170)
 
     #Etiqueta precio del Producto
@@ -303,7 +303,7 @@ class Inventario:
         mssg.showerror('Atención!!', 'La cantidad es inválida')
         self.errorCampos=True
         # Limpia el campo
-        self.cantidad.delete(0, "end")
+        #self.cantidad.delete(0, "end")
     
 
 #Validación de precio
@@ -318,9 +318,10 @@ class Inventario:
     except ValueError:
         # Error, no es un número double
         mssg.showerror('Atención!!', 'El precio es inválido')
-        self.errorCampos=True
+        #self.errorCampos=True
         # Limpia el campo
-        self.precio.delete(0, "end")
+        #self.precio.delete(0, "end")
+    
 
 #Validar Unidad
   def validaUnidad(self):
@@ -329,12 +330,10 @@ class Inventario:
         mssg.showerror('Error', 'El campo de unidad no puede estar vacío o contener solo espacios en blanco')
         self.unidad.delete(0,"end")
         self.errorCampos=True
+        #self.unidad.delete(0,"end")
     elif len(cadena) > 10:
         mssg.showerror('Error', 'El campo de unidad no puede superar los 10 caracteres')
         self.unidad.delete(0,"end")
-        self.errorCampos=True
-    else:
-      self.errorCampos=False
 
 #Validar Descripción        
   def validaDescripcion(self):
@@ -344,17 +343,37 @@ class Inventario:
         self.errorCampos=True
         self.descripcion.delete(0,"end")
     else: 
-      self.errorCampos=False
+      #self.errorCampos=False
+      pass
 
 # #Valida Fecha
   def validaFecha(self):
-   #Valida fecha.
-    cadena = self.fecha.get()
+    fecha_str = self.fecha.get()
+    
+    # Verificar el formato de la fecha (dd-mm-aaa)
+    fecha_parts = fecha_str.split('-')
+    if len(fecha_parts) != 3:
+        mssg.showerror("Error", "El formato de la fecha es incorrecto.")
+        return
 
-    if not datetime.datetime.strptime(cadena, "%d-%m-%y").is_valid():
-      mssg.showerror('Atención!', 'La fecha debe tener formato dd/mm/aaaa además de ser valida')
-      self.fecha.delete(0,"end")
+    try:
+        dia, mes, año = map(int, fecha_parts)
 
+        if not (1 <= mes <= 12):
+            mssg.showerror("Error", "La fecha es inválida. Mes fuera de rango")
+            return
+
+        if mes in [4, 6, 9, 11]:
+            max_dia = 30
+        elif mes == 2:
+            max_dia = 29 if (año % 4 == 0 and (año % 100 != 0 or año % 400 == 0)) else 28
+        else:
+            max_dia = 31
+
+        if not (1 <= dia <= max_dia):
+            mssg.showerror("Error", "La fecha es inválida. Día no corresponde al mes")
+    except ValueError:
+        mssg.showerror("Error", "La fecha es inválida.")
  # def validaFecha(self):
   #Valida que la longitud no sea mayor a 15 caracteres y que solo se inserten números. '''
   #  cadena = self.idNit.get()
