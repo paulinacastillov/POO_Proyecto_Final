@@ -641,13 +641,62 @@ class Inventario:
     self.capturaComparacion()
 
 #Boton eliminar
+#Boton eliminar
+ # Falta poner la ventana bonita, que esta se cierre con cancelar 
+ # y cuando se cierre el programa,ademas poner el mensaje de error si no se ha puesto o seleccionado un producto o provedor.
+  #  pass
+
   def eliminaRegistro(self, event=None):
-    '''Elimina un Registro en la BD'''
-    #A PARTIR DE LA SELECCION CON EL CURSOR PREGUNTAR SI ESTA SEGURO DE QUERER BORRAR
-    #EN CASO SI PREGUNTAR SI QUIERE BORRAR EL PROVEEDOR O EL UNICAMENTE PRODUCTO
-      #EN CASO DE SER PROVEEDOR BORRAR ESTE Y SUS PRODUCTOS
-    #EN CASO NO NO HACER NADA
-    pass
+
+
+
+    self.ventana1 = tk.Tk()
+    self.seleccion = tk.IntVar(self.ventana1, 2)
+    ancho_ventana = 300  # Ancho en píxeles
+    alto_ventana = 300   # Alto en píxeles
+    self.ventana1.geometry(f"{ancho_ventana}x{alto_ventana}")
+
+    self.radio1 = tk.Radiobutton(self.ventana1, text="Proveedor", variable=self.seleccion, value=1)
+    self.radio1.grid(column=0, row=0)
+    self.radio2 = tk.Radiobutton(self.ventana1, text="Producto", variable=self.seleccion, value=2)
+    self.radio2.grid(column=0, row=1)
+    self.boton1 = tk.Button(self.ventana1, text="Eliminar", command=self.borrar)
+    self.boton1.grid(column=0, row=2)
+    self.label1 = tk.Label(self.ventana1, text="Opción seleccionada: ")
+    self.label1.grid(column=0, row=3)
+
+
+
+  def borrar(self):
+
+    id_nit = self.idNit.get()
+    if not id_nit:
+        mssg.showerror('Error', 'Debes ingresar un ID/NIT de proveedor para eliminar.')
+        return
+
+    if (self.seleccion.get() == 1):
+
+
+        query_proveedor = "DELETE FROM Proveedores WHERE idNitProv = ?"
+        self.run_Query(query_proveedor, (id_nit,))
+        query_productos = "DELETE FROM Productos WHERE idNit = ?"
+        self.run_Query(query_productos, (id_nit,))
+        self.limpiaCampos()
+        self.deshabilitaProductos()
+        self.treeProductos.delete(*self.treeProductos.get_children())
+        mssg.showinfo('Éxito', 'El proveedor y sus productos se han eliminado con éxito.')
+
+
+    id_cod = self.codigo.get()
+    if not id_cod:
+        mssg.showerror('Error', 'Debes ingresar un codigo de proveedor para eliminar.')
+        return
+
+    if (self.seleccion.get() == 2):
+        query_productos2 = "DELETE FROM Productos WHERE Codigo = ?"
+        self.treeProductos.delete(*self.treeProductos.get_children())
+        self.run_Query(query_productos2, (id_cod,))
+        mssg.showinfo('Éxito', 'Los productos del proveedor se han eliminado con éxito.')
   
   #Boton buscar  
   def buscarDB(self): 
