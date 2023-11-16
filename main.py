@@ -11,11 +11,23 @@ import datetime
 
 
 class Inventario:
-  def __init__(self, master=None):
+  """
+    Esta clase es el corazón de la app de inventario y proveedor
+    conectando ala itnerfaz con los algoritmos creados para su función.
+    La app muestra la base de datos de proveedores de una empresa además de los
+    productos de cada uno de estos. Permite además de visualizar esta base de datos, editarla
 
+    :param a: El primer número.
+    :param b: El segundo número.
+    :return: La suma de a y b.
+  """
+  def __init__(self, master=None):
+    #Define la dirección donde se almancena el proyecto
     self.path = os.path.abspath('')#r'X:/Users/ferna/Documents/UNal/Alumnos/2023_S2/ProyInventario'
-    self.db_name = self.path + r'/bases_de_datos/Inventario.db' # Toca conseguir una base de datos
-    
+    """hola"""
+    self.db_name = self.path + r'/bases_de_datos/Inventario.db'
+    """Dirección de la base de datos usada"""
+
 
     # Dimensiones de la pantalla
     # root = tk.Tk()
@@ -28,7 +40,8 @@ class Inventario:
     Inventario.actualiza = None
 
     # Crea ventana principal
-    self.win = tk.Tk() 
+    self.win = tk.Tk()
+    """Canvas de la interefas"""
     self.win.geometry(f"{int(ancho/30)}x{int(alto/30)}")
     self.win.iconbitmap(self.path + r'/imagenes/dt.ico')
     self.win.resizable(True, True)
@@ -42,10 +55,12 @@ class Inventario:
     self.win.configure(background="#e0e0e0",font="{Arial} 12 {bold}",
                        height=ancho,labelanchor="n",width=alto)
     self.tabs = ttk.Notebook(self.win)
+    """Contenedor de widgets"""
     self.tabs.configure(height=700, width=799)
 
     #Frame de datos
     self.frm1 = ttk.Frame(self.tabs)
+    
     self.frm1.configure(height=200, width=200)
 
     #Etiqueta IdNit del Proveedor
@@ -242,11 +257,13 @@ class Inventario:
 
   #Fución de manejo de eventos del sistema
   def run(self):
+      """Manejo de eventos del sistemas"""
       self.mainwindow.mainloop()
 
   ''' ......... Métodos utilitarios del sistema .............'''
   #Rutina de centrado de pantalla
   def centra(self,win,ancho,alto): 
+      """Rutina de centrado de la pantalla"""
       fraccion_pantalla = 2
       """ centra las ventanas en la pantalla """ 
       x = win.winfo_screenwidth() // fraccion_pantalla  - ancho // fraccion_pantalla 
@@ -260,7 +277,7 @@ class Inventario:
   # Borra el último 
 
   def validaIdNit(self):
-  #Valida que la longitud no sea mayor a 15 caracteres y que solo se inserten números. '''
+    """Valida que la longitud no sea mayor a 15 caracteres y que solo se inserten números."""
     cadena = self.idNit.get()
     if len(cadena) > 14:
         self.idNit.delete(0, "end")  # Eliminar todo el contenido del campo
@@ -283,7 +300,7 @@ class Inventario:
 
 #Validación de cantidad
   def validaCantidad(self):
-    # Validar
+    """Verifica que en input sea un número"""
     cadena = self.cantidad.get()
     try:
         valor = float(cadena)
@@ -299,6 +316,7 @@ class Inventario:
 
 #Validación de precio
   def validaPrecio(self):
+    """Verifica que el input sea un número"""
     valor_original = self.precio.get()
     # Valida que sea un número double.
     cadena = self.precio.get()
@@ -317,6 +335,7 @@ class Inventario:
 
 #Validar Unidad
   def validaUnidad(self):
+    """Verfica que el input sea no vacío y un número """
     cadena = self.unidad.get()
     if not cadena.strip():  # Verifica si la cadena está vacía o compuesta solo por espacios en blanco
         mssg.showerror('Error', 'El campo de unidad no puede estar vacío o contener solo espacios en blanco')
@@ -332,6 +351,7 @@ class Inventario:
 
 #Validar Descripción        
   def validaDescripcion(self):
+    """Verifica que el input sea no vacío"""
     cadena = self.descripcion.get()
     if not cadena.strip():
         mssg.showerror('Error', 'El campo de descripción no puede estar vacío o contener solo espacios en blanco')
@@ -344,6 +364,7 @@ class Inventario:
 # #Valida Fecha
 #colocar que fecha no mayor a hoy
   def validaFecha(self):
+    """Verifica que la fecha ingresada exista y que este en formato dd-mm-aaaa"""
     fecha_str = self.fecha.get()
     
     # Verificar el formato de la fecha (dd-mm-aaa)
@@ -429,10 +450,12 @@ class Inventario:
     self.fecha.configure(state='normal')
     
   def habilitaProveedor(self):
+    """Habilita los campos de información de proveedor"""
     self.razonSocial.configure(state='normal')
     self.ciudad.configure(state='normal')  
     
   def deshabilitaProductos(self):
+    """Deshabilita los campos de creación/edición de productos"""
     self.razonSocial.configure(state='disabled')
     self.ciudad.configure(state='disabled')
     self.codigo.configure(state='disabled')
@@ -448,9 +471,9 @@ class Inventario:
     self.ciudad.configure('disabled')
     
   def capturaComparacion(self):
+    """Almacena en variables los inputs almacenados en los campos de la interfas"""
     self.comparaRazonSocial = self.razonSocial.get()
     self.comparaCiudad = self.ciudad.get()
-    
     self.comparaDescripcion = self.descripcion.get()
     self.comparaCantidad = self.cantidad.get()
     self.comparaFecha = self.fecha.get()
@@ -521,21 +544,25 @@ class Inventario:
       return False     
 
   def actualiza_Proveedor(self):
+    """Sobre escribe en la base de datos los datos del proveedor"""
     query = '''UPDATE Proveedores SET Razon_Social = ?, Ciudad = ? WHERE idNitProv = ?'''
     param = [self.razonSocial.get(),self.ciudad.get(),self.idNit.get()]
     self.run_Query(query,param)
   
   def nuevo_Proveedor(self):
+    """Inserta en la tabla Proveedores un proveedor"""
     query = '''INSERT INTO Proveedores VALUES(?,?,?) '''
     param = [self.idNit.get(),self.razonSocial.get(),self.ciudad.get()]
     self.run_Query(query,param)
  
   def actualiza_Producto(self):
+    """Sobre escribe la tabla Productos de la base de datos"""
     query= '''UPDATE Productos SET Descripcion = ?, Und = ?, Cantidad = ?, Precio = ?, Fecha = ? WHERE Codigo = ?'''
     param= [self.descripcion.get(),self.unidad.get(),self.cantidad.get(),self.precio.get(),self.fecha.get(),self.codigo.get()]
     self.run_Query(query,param) 
   
   def nuevo_Producto(self):
+    """Inserta en la tabla Productos un nuevo valor"""
     query = '''INSERT INTO Productos VALUES(?,?,?,?,?,?,?)'''
     param= [self.idNit.get(),self.codigo.get(),self.descripcion.get(),self.unidad.get(),self.cantidad.get(),self.precio.get(),self.fecha.get()]
     self.run_Query(query,param) 
