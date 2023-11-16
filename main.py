@@ -11,11 +11,23 @@ import datetime
 
 
 class Inventario:
-  def __init__(self, master=None):
+  """
+    Esta clase es el corazón de la app de inventario y proveedor
+    conectando ala itnerfaz con los algoritmos creados para su función.
+    La app muestra la base de datos de proveedores de una empresa además de los
+    productos de cada uno de estos. Permite además de visualizar esta base de datos, editarla
 
+    :param a: El primer número.
+    :param b: El segundo número.
+    :return: La suma de a y b.
+  """
+  def __init__(self, master=None):
+    #Define la dirección donde se almancena el proyecto
     self.path = os.path.abspath('')#r'X:/Users/ferna/Documents/UNal/Alumnos/2023_S2/ProyInventario'
-    self.db_name = self.path + r'/bases_de_datos/Inventario.db' # Toca conseguir una base de datos
     
+    self.db_name = self.path + r'/bases_de_datos/Inventario.db'
+    """Dirección de la base de datos usada"""
+
 
     # Dimensiones de la pantalla
     # root = tk.Tk()
@@ -28,7 +40,8 @@ class Inventario:
     Inventario.actualiza = None
 
     # Crea ventana principal
-    self.win = tk.Tk() 
+    self.win = tk.Tk()
+    """Canvas de la interefas"""
     self.win.geometry(f"{int(ancho/30)}x{int(alto/30)}")
     self.win.iconbitmap(self.path + r'/imagenes/dt.ico')
     self.win.resizable(True, True)
@@ -42,6 +55,7 @@ class Inventario:
     self.win.configure(background="#e0e0e0",font="{Arial} 12 {bold}",
                        height=ancho,labelanchor="n",width=alto)
     self.tabs = ttk.Notebook(self.win)
+    """Contenedor de widgets"""
     self.tabs.configure(height=700, width=799)
 
     #Frame de datos
@@ -450,7 +464,6 @@ class Inventario:
   def capturaComparacion(self):
     self.comparaRazonSocial = self.razonSocial.get()
     self.comparaCiudad = self.ciudad.get()
-    
     self.comparaDescripcion = self.descripcion.get()
     self.comparaCantidad = self.cantidad.get()
     self.comparaFecha = self.fecha.get()
