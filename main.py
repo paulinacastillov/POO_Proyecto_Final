@@ -259,9 +259,6 @@ class Inventario:
  # Buscar como blanquear
   # Borra el último 
 
-
-
-
   def validaIdNit(self):
   #Valida que la longitud no sea mayor a 15 caracteres y que solo se inserten números. '''
     cadena = self.idNit.get()
@@ -424,8 +421,6 @@ class Inventario:
 
   def habilitaProductos(self):
     '''Habilita los campos para crear productos'''
-    self.razonSocial.configure(state='normal')
-    self.ciudad.configure(state='normal')
     self.codigo.configure(state='normal')
     self.descripcion.configure(state='normal')
     self.unidad.configure(state='normal')
@@ -446,6 +441,11 @@ class Inventario:
     self.cantidad.configure(state='disabled')
     self.precio.configure(state='disabled')
     self.fecha.configure(state='disabled')
+
+  def deshabilitaProveedor(self):
+    self.idNit.configure('disabled')
+    self.razonSocial.configure('disabled')
+    self.ciudad.configure('disabled')
     
   def capturaComparacion(self):
     self.comparaRazonSocial = self.razonSocial.get()
@@ -620,12 +620,36 @@ class Inventario:
     self.emptyCodigo = self.codigo.get()
     self.codigo.configure(state='normal')
     self.limpiaProductos()
-    self.habilitaProveedor() 
-    self.habilitaProductos()
+    self.codigo.configure(state='disabled')
     
+    
+    if(mssg.askyesno(message='Desea editar el Proveedor?')==True):
+      self.editaProveedor= True
+    else:
+      self.editaProveedor= False
+      self.deshabilitaProductos()
+      
+
+    if(self.editaProveedor == True):
+      self.habilitaProveedor() 
+      self.idNit.configure(state = 'readonly')   
+      
     seleccion = self.treeProductos.focus()
     self.values =self.treeProductos.item(seleccion)["values"]
+    print(len(seleccion))
+    
     if(len(seleccion)!=0):
+      if(mssg.askyesno(message='Desea editar el producto?')==True):
+        self.editaProducto = True
+      else:
+        self.editaProducto=False
+        self.deshabilitaProductos()
+    else:
+      self.editaProducto= False
+      
+      
+    if(self.editaProducto==True):
+      self.habilitaProductos()
       self.codigo.insert(0,self.values[0])
       self.descripcion.insert(0,self.values[1]) 
       self.unidad.insert(0,self.values[2])
@@ -634,11 +658,13 @@ class Inventario:
       self.fecha.insert(0,self.values[5])
       self.codigo.configure(state='disabled')
       self.nuevoProducto = False
-    else:
-      self.codigo.configure(state='normal')
+    elif(mssg.askyesno(message='Desea Agregar un producto?')==True):
+      self.habilitaProductos()
+      self.nuevoProducto = True
       
-    self.idNit.configure(state = 'readonly')
     self.capturaComparacion()
+
+
 
 #Boton eliminar
 #Boton eliminar
@@ -647,8 +673,6 @@ class Inventario:
   #  pass
 
   def eliminaRegistro(self, event=None):
-
-
 
     self.ventana1 = tk.Tk()
     self.seleccion = tk.IntVar(self.ventana1, 2)
@@ -664,8 +688,6 @@ class Inventario:
     self.boton1.grid(column=0, row=2)
     self.label1 = tk.Label(self.ventana1, text="Opción seleccionada: ")
     self.label1.grid(column=0, row=3)
-
-
 
   def borrar(self):
 
@@ -697,6 +719,29 @@ class Inventario:
         self.treeProductos.delete(*self.treeProductos.get_children())
         self.run_Query(query_productos2, (id_cod,))
         mssg.showinfo('Éxito', 'Los productos del proveedor se han eliminado con éxito.')
+  
+  
+# #Voy a intentar crear una ventana para que se diga que quiere editar si PROVEEDOR PRODUCTO o PRODUCTO NUEVO 
+#  def editar(self):
+#    self.ventana2= tk.Tk()
+#    self.ventana2.geometry(f"{200}x{200}")
+#    
+#    self.btnGrabar = ttk.Button(self.frm2)
+#    self.btnGrabar.configure(text='Grabar',command=lambda: (self.grabarDB()))
+#    self.btnGrabar.pack(side="bottom")
+#    self.btnGrabar.place(anchor="nw", width=70, x=210, y=10)
+#    
+#    self.btnProv = ttk.Button(self.frm2)
+#    self.btnProv.configure(text='Proveedor')
+#    self.btnProv.pack(side="bottom")
+#    self.btnProv.place(anchor="nw", width=70, x=210, y=10)
+#    
+#    self.btnProd = ttk.Button(self.frm2)
+#    self.btnProvNue=ttk.Button(self.frm2)
+      
+  
+  
+  
   
   #Boton buscar  
   def buscarDB(self): 
