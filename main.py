@@ -9,6 +9,7 @@ import os
 from Funciones import *
 import datetime
 
+__pdoc__={}
 
 class Inventario:
   """
@@ -24,7 +25,8 @@ class Inventario:
   def __init__(self, master=None):
     #Define la dirección donde se almancena el proyecto
     self.path = os.path.abspath('')#r'X:/Users/ferna/Documents/UNal/Alumnos/2023_S2/ProyInventario'
-    """hola"""
+    """hola
+    :meta hide-value:"""
     self.db_name = self.path + r'/bases_de_datos/Inventario.db'
     """Dirección de la base de datos usada"""
 
