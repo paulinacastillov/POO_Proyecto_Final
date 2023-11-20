@@ -397,22 +397,27 @@ class Inventario:
 
 # #Valida Fecha
 #colocar que fecha no mayor a hoy
+# #Valida Fecha
+#colocar que fecha no mayor a hoy
   def validaFecha(self):
-    """Verifica que la fecha ingresada exista y que este en formato dd-mm-aaaa"""
     fecha_str = self.fecha.get()
     
-    # Verificar el formato de la fecha (dd-mm-aaa)
+    # Verificar el formato de la fecha (dd-mm-aaaa)
     fecha_parts = fecha_str.split('-')
     if len(fecha_parts) != 3:
         mssg.showerror("Error", "El formato de la fecha es incorrecto.")
-        self.errorCampos=True
         return
+
     try:
         dia, mes, año = map(int, fecha_parts)
 
+        # Verificar que el año tenga exactamente 4 dígitos
+        if len(str(año)) != 4:
+            mssg.showerror("Error", "La fecha es inválida. El año debe tener 4 dígitos.")
+            return
+
         if not (1 <= mes <= 12):
             mssg.showerror("Error", "La fecha es inválida. Mes fuera de rango")
-            self.errorCampos=True
             return
 
         if mes in [4, 6, 9, 11]:
@@ -424,10 +429,8 @@ class Inventario:
 
         if not (1 <= dia <= max_dia):
             mssg.showerror("Error", "La fecha es inválida. Día no corresponde al mes")
-            self.errorCampos=True
     except ValueError:
-        mssg.showerror("Error", "La fecha es inválida.")
-        self.errorCampos=True
+        mssg.showerror("Error", "La fecha es inválida.")
         
         
  # def validaFecha(self):
