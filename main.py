@@ -43,7 +43,7 @@ class Inventario:
     self.win = tk.Tk()
     """Canvas de la interefas"""
     self.win.geometry(f"{int(ancho/30)}x{int(alto/30)}")
-    self.win.iconbitmap(self.path + r'/imagenes/dt.ico')
+#    self.win.iconbitmap(self.path + r'/imagenes/dt.ico')
     self.win.resizable(True, True)
     self.win.title("Manejo de Proveedores") 
 
@@ -639,7 +639,7 @@ class Inventario:
       else:   
         mssg.showerror(title='Error',message='No se realizo el guardado de datos') 
     print('espacio codigo = 0')
-#Boton editar
+
   def editaTP(self):
     ''' Edita una tupla del TreeView despues de seleccionarla'''
     #Para revisar si esta vacio el campo en grabar
@@ -749,23 +749,7 @@ class Inventario:
   
   
 # #Voy a intentar crear una ventana para que se diga que quiere editar si PROVEEDOR PRODUCTO o PRODUCTO NUEVO 
-#  def editar(self):
-#    self.ventana2= tk.Tk()
-#    self.ventana2.geometry(f"{200}x{200}")
-#    
-#    self.btnGrabar = ttk.Button(self.frm2)
-#    self.btnGrabar.configure(text='Grabar',command=lambda: (self.grabarDB()))
-#    self.btnGrabar.pack(side="bottom")
-#    self.btnGrabar.place(anchor="nw", width=70, x=210, y=10)
-#    
-#    self.btnProv = ttk.Button(self.frm2)
-#    self.btnProv.configure(text='Proveedor')
-#    self.btnProv.pack(side="bottom")
-#    self.btnProv.place(anchor="nw", width=70, x=210, y=10)
-#    
-#    self.btnProd = ttk.Button(self.frm2)
-#    self.btnProvNue=ttk.Button(self.frm2)
-      
+
   
   
   
