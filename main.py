@@ -9,6 +9,7 @@ import os
 from Funciones import *
 import datetime
 
+__pdoc__={}
 
 class Inventario:
   """
@@ -17,18 +18,15 @@ class Inventario:
     La app muestra la base de datos de proveedores de una empresa además de los
     productos de cada uno de estos. Permite además de visualizar esta base de datos, editarla
 
-    :param a: El primer número.
-    :param b: El segundo número.
-    :return: La suma de a y b.
   """
   def __init__(self, master=None):
     #Define la dirección donde se almancena el proyecto
     self.path = os.path.abspath('')#r'X:/Users/ferna/Documents/UNal/Alumnos/2023_S2/ProyInventario'
-    """hola"""
+    """@private""" #Esto sirve para que no salga en la documentación esta variable
     self.db_name = self.path + r'/bases_de_datos/Inventario.db'
-    """Dirección de la base de datos usada"""
+    """@private"""
 
-
+    self.busqueda = False
     # Dimensiones de la pantalla
     # root = tk.Tk()
     # ancho=root.winfo_screenwidth()
@@ -41,7 +39,7 @@ class Inventario:
 
     # Crea ventana principal
     self.win = tk.Tk()
-    """Canvas de la interefas"""
+    """@private"""
     self.win.geometry(f"{int(ancho/30)}x{int(alto/30)}")
 #    self.win.iconbitmap(self.path + r'/imagenes/dt.ico')
     self.win.resizable(True, True)
@@ -55,21 +53,23 @@ class Inventario:
     self.win.configure(background="#e0e0e0",font="{Arial} 12 {bold}",
                        height=ancho,labelanchor="n",width=alto)
     self.tabs = ttk.Notebook(self.win)
-    """Contenedor de widgets"""
+    """@private"""
     self.tabs.configure(height=700, width=799)
 
     #Frame de datos
     self.frm1 = ttk.Frame(self.tabs)
-    
+    """@private"""
     self.frm1.configure(height=200, width=200)
 
     #Etiqueta IdNit del Proveedor
     self.lblIdNit = ttk.Label(self.frm1)
+    """@private"""
     self.lblIdNit.configure(text='Id/Nit', width=6)
     self.lblIdNit.place(anchor="nw", x=10, y=40)
 
     #Captura IdNit del Proveedor
     self.idNit = ttk.Entry(self.frm1)
+    """@private"""
     self.idNit.configure(takefocus=True)
     self.idNit.place(anchor="nw", x=50, y=40)
     self.idNit.bind("<Return>", self.validaIdNit)
@@ -78,104 +78,124 @@ class Inventario:
     
     #Etiqueta razón social del Proveedor
     self.lblRazonSocial = ttk.Label(self.frm1)
+    """@private"""
     self.lblRazonSocial.configure(text='Razon social', width=12)
     self.lblRazonSocial.place(anchor="nw", x=210, y=40)
 
     #Captura razón social del Proveedor
     self.razonSocial = ttk.Entry(self.frm1)
+    """@private"""
     self.razonSocial.configure(width=36,state= 'disabled')
     self.razonSocial.place(anchor="nw", x=290, y=40)
 
     #Etiqueta ciudad del Proveedor
     self.lblCiudad = ttk.Label(self.frm1)
+    """@private"""
     self.lblCiudad.configure(text='Ciudad', width=7)
     self.lblCiudad.place(anchor="nw", x=540, y=40)
 
     #Captura ciudad del Proveedor
     self.ciudad = ttk.Entry(self.frm1)
+    """@private"""
     self.ciudad.configure(width=30,state= 'disabled')
     self.ciudad.place(anchor="nw", x=590, y=40)
 
     #Separador
     self.separador1 = ttk.Separator(self.frm1)
+    """@private"""
     self.separador1.configure(orient="horizontal")
     self.separador1.place(anchor="nw", width=800, x=0, y=79)
 
     #Etiqueta Código del Producto
     self.lblCodigo = ttk.Label(self.frm1)
+    """@private"""
     self.lblCodigo.configure(text='Código', width=7)
     self.lblCodigo.place(anchor="nw", x=10, y=120)
 
     #Captura el código del Producto
     self.codigo = ttk.Entry(self.frm1)
+    """@private"""
     self.codigo.configure(width=13, state= 'disabled')
     self.codigo.place(anchor="nw", x=60, y=120)
 
     #Etiqueta descripción del Producto
     self.lblDescripcion = ttk.Label(self.frm1)
+    """@private"""
     self.lblDescripcion.configure(text='Descripción', width=11)
     self.lblDescripcion.place(anchor="nw", x=220, y=120)
 
     #Captura la descripción del Producto
     self.descripcion = ttk.Entry(self.frm1)
+    """@private"""
     self.descripcion.configure(width=36, state= 'disabled')
     self.descripcion.place(anchor="nw", x=290, y=120)
 
     #Etiqueta unidad o medida del Producto
     self.lblUnd = ttk.Label(self.frm1)
+    """@private"""
     self.lblUnd.configure(text='Unidad', width=7)
     self.lblUnd.place(anchor="nw", x=540, y=120)
 
     #Captura la unidad o medida del Producto
     self.unidad = ttk.Entry(self.frm1)
+    """@private"""
     self.unidad.configure(width=10, state= 'disabled')
     self.unidad.place(anchor="nw", x=590, y=120)
 
     #Etiqueta cantidad del Producto
     self.lblCantidad = ttk.Label(self.frm1)
+    """@private"""
     self.lblCantidad.configure(text='Cantidad', width=8)
     self.lblCantidad.place(anchor="nw", x=10, y=170)
 
     #Captura la cantidad del Producto
     self.cantidad = ttk.Entry(self.frm1)
+    """@private"""
     self.cantidad.configure(width=12,state= 'disabled')
     #self.cantidad.bind("<Key>", self.validaCantidad)
     self.cantidad.place(anchor="nw", x=70, y=170)
 
     #Etiqueta precio del Producto
     self.lblPrecio = ttk.Label(self.frm1)
+    """@private"""
     self.lblPrecio.configure(text='Precio $', width=8)
     self.lblPrecio.place(anchor="nw", x=170, y=170)
 
     #Captura el precio del Producto
     self.precio = ttk.Entry(self.frm1)
+    """@private"""
     self.precio.configure(width=15,state= 'disabled')
     self.precio.place(anchor="nw", x=220, y=170)
 
     #Etiqueta fecha de compra del Producto
     self.lblFecha = ttk.Label(self.frm1)
+    """@private"""
     self.lblFecha.configure(text='Fecha', width=6)
     self.lblFecha.place(anchor="nw", x=350, y=170)
 
     #Captura la fecha de compra del Producto
     self.fecha = ttk.Entry(self.frm1)
+    """@private"""
     self.fecha.configure(width=10,state= 'disabled')
     self.fecha.place(anchor="nw", x=390, y=170)
 
     #Separador
     self.separador2 = ttk.Separator(self.frm1)
+    """@private"""
     self.separador2.configure(orient="horizontal")
     self.separador2.place(anchor="nw", width=800, x=0, y=220)
 
 
     #tablaTreeView
     self.style=ttk.Style()
+    """@private"""
     self.style.configure("estilo.Treeview", highlightthickness=0, bd=0, background="#e0e0e0", font=('Calibri Light',10))
     self.style.configure("estilo.Treeview.Heading", background='Azure', font=('Calibri Light', 10,'bold')) 
     self.style.layout("estilo.Treeview", [('estilo.Treeview.treearea', {'sticky': 'nswe'})])
     
     #Árbol para mosrtar los datos de la B.D.
     self.treeProductos = ttk.Treeview(self.frm1, style="estilo.Treeview")
+    """@private"""
     
     self.treeProductos.configure(selectmode="extended")
 
@@ -205,6 +225,7 @@ class Inventario:
 
     #Scrollbar en el eje Y de treeProductos
     self.scrollbary=ttk.Scrollbar(self.treeProductos, orient='vertical', command=self.treeProductos.yview)
+    """@private"""
     self.treeProductos.configure(yscroll=self.scrollbary.set)
     self.scrollbary.place(x=778, y=25, height=478)
 
@@ -215,35 +236,41 @@ class Inventario:
 
     #Frame 2 para contener los botones
     self.frm2 = ttk.Frame(self.win)
+    """@private"""
     self.frm2.configure(height=90, width=ancho)
    
 
     #Botón para Buscar un Proveedor
     self.btnBuscar = ttk.Button(self.frm2)
+    """@private"""
     self.btnBuscar.configure(text='Buscar', command=lambda: (self.buscarDB()))
     self.btnBuscar.pack(side="bottom")
     self.btnBuscar.place(anchor="nw", width=70, x=140, y=10)
 
     # Botón para Guardar los datos
     self.btnGrabar = ttk.Button(self.frm2)
+    """@private"""
     self.btnGrabar.configure(text='Grabar',command=lambda: (self.grabarDB()))
     self.btnGrabar.pack(side="bottom")
     self.btnGrabar.place(anchor="nw", width=70, x=210, y=10)
 
     # Botón para Editar los datos
     self.btnEditar = ttk.Button(self.frm2)
-    self.btnEditar.configure(text='Editar', command= self.editaTP)
+    """@private"""
+    self.btnEditar.configure(text='Editar', command= self.edita)
     self.btnEditar.pack(side="bottom")
     self.btnEditar.place(anchor="nw", width=70, x=280, y=10)
 
     # Botón para Eliminar datos
     self.btnEliminar = ttk.Button(self.frm2)
+    """@private"""
     self.btnEliminar.configure(text='Eliminar', command = self.eliminaRegistro)
     self.btnEliminar.pack(side="bottom")
     self.btnEliminar.place(anchor="nw", width=70, x=350, y=10)
 
     # Botón para cancelar una operación
     self.btnCancelar = ttk.Button(self.frm2)
+    """@private"""
     self.btnCancelar.configure(text='Cancelar', command=self.cancelar)
     self.btnCancelar.pack(side="bottom")
     self.btnCancelar.place(anchor="nw", width=70, x=420, y=10)
@@ -254,6 +281,7 @@ class Inventario:
 
     # widget Principal del sistema
     self.mainwindow = self.win
+    """@private"""
 
   #Fución de manejo de eventos del sistema
   def run(self):
@@ -263,7 +291,13 @@ class Inventario:
   ''' ......... Métodos utilitarios del sistema .............'''
   #Rutina de centrado de pantalla
   def centra(self,win,ancho,alto): 
-      """Rutina de centrado de la pantalla"""
+      """Rutina de centrado de la pantalla
+      
+    :param win: Canvas el cual va aefectuar la función.
+    :param ancho: tamaño de la pantalla usada a lo largo.
+    :param alto: tamaño de la pantalla usada a lo alto.
+
+    :return: None"""
       fraccion_pantalla = 2
       """ centra las ventanas en la pantalla """ 
       x = win.winfo_screenwidth() // fraccion_pantalla  - ancho // fraccion_pantalla 
@@ -363,22 +397,27 @@ class Inventario:
 
 # #Valida Fecha
 #colocar que fecha no mayor a hoy
+# #Valida Fecha
+#colocar que fecha no mayor a hoy
   def validaFecha(self):
-    """Verifica que la fecha ingresada exista y que este en formato dd-mm-aaaa"""
     fecha_str = self.fecha.get()
     
-    # Verificar el formato de la fecha (dd-mm-aaa)
+    # Verificar el formato de la fecha (dd-mm-aaaa)
     fecha_parts = fecha_str.split('-')
     if len(fecha_parts) != 3:
         mssg.showerror("Error", "El formato de la fecha es incorrecto.")
-        self.errorCampos=True
         return
+
     try:
         dia, mes, año = map(int, fecha_parts)
 
+        # Verificar que el año tenga exactamente 4 dígitos
+        if len(str(año)) != 4:
+            mssg.showerror("Error", "La fecha es inválida. El año debe tener 4 dígitos.")
+            return
+
         if not (1 <= mes <= 12):
             mssg.showerror("Error", "La fecha es inválida. Mes fuera de rango")
-            self.errorCampos=True
             return
 
         if mes in [4, 6, 9, 11]:
@@ -390,10 +429,8 @@ class Inventario:
 
         if not (1 <= dia <= max_dia):
             mssg.showerror("Error", "La fecha es inválida. Día no corresponde al mes")
-            self.errorCampos=True
     except ValueError:
-        mssg.showerror("Error", "La fecha es inválida.")
-        self.errorCampos=True
+        mssg.showerror("Error", "La fecha es inválida.")
         
         
  # def validaFecha(self):
@@ -413,7 +450,7 @@ class Inventario:
 
   #Rutina de limpieza de datos
   def limpiaCampos(self):
-      ''' Limpia todos los campos de captura'''
+      ''' Limpia TODOS los campos de captura'''
       Inventario.actualiza = None
       self.idNit.config(state = 'normal')
       self.idNit.delete(0,'end')
@@ -466,6 +503,7 @@ class Inventario:
     self.fecha.configure(state='disabled')
 
   def deshabilitaProveedor(self):
+    """Deshabilita los campos de creación/edición de proovedores"""
     self.idNit.configure('disabled')
     self.razonSocial.configure('disabled')
     self.ciudad.configure('disabled')
@@ -568,6 +606,7 @@ class Inventario:
     self.run_Query(query,param) 
   
   def actualizaTreeview(self):
+    """Actualiza la información mostrada en los campos posterior a una acción de creación o modificación"""
     tabla_TreeView = self.treeProductos.get_children()
     for linea in tabla_TreeView:
       self.treeProductos.delete(linea) # Límpia la filas del TreeView
@@ -581,6 +620,7 @@ class Inventario:
   # Funciones de botones
 #Boton cancelar
   def cancelar(self):
+    """Limpia los campos y retorna la interfas a su estado inicial donde solo se busca por id de proveedor"""
     self.idNit.configure(state='normal')  
     self.codigo.configure(state='normal')
     self.habilitaProveedor()
@@ -593,7 +633,7 @@ class Inventario:
        
 #Boton grabar 
   def grabarDB(self):
-    '''Graba lo que se a cambiado en la interface '''  
+    '''Edita la base de datos según los campos de la interfas '''  
     #Proveedores--------------
     if(self.cambioProveedores()==False):
       if(mssg.askyesno(title='Grabar', message='Se realizaron cambios en el Proveedor, desea continuar?')==True):
@@ -640,31 +680,92 @@ class Inventario:
         mssg.showerror(title='Error',message='No se realizo el guardado de datos') 
     print('espacio codigo = 0')
 
-  def editaTP(self):
-    ''' Edita una tupla del TreeView despues de seleccionarla'''
-    #Para revisar si esta vacio el campo en grabar
+
+#Boton editar
+  def edita(self):
+    if(self.busqueda==False):
+      mssg.showerror(message='Realice una busqueda antes de editar')
+    else:
+      self.ventanaEd = tk.Tk()
+      self.ventanaEd.resizable(False,False)
+      self.ventanaEd.title('Editar')
+      
+      self.btnProv = ttk.Button(self.ventanaEd)
+      self.btnProv.config(text='Proveedor', command=self.editaPrv)
+      self.btnProv.pack(side='top')
+      self.btnProv.place(anchor='nw',relx=0.35,rely=0.1)
+      
+      self.btnNueProv = ttk.Button(self.ventanaEd)
+      self.btnNueProv.config(text='Nuevo Proveedor',command=self.editaNPrv)
+      self.btnNueProv.pack(side='top')
+      self.btnNueProv.place(anchor='nw' ,relx=0.3,rely=0.3)
+
+      self.btnProd = ttk.Button(self.ventanaEd)
+      self.btnProd.config(text='Producto', command=self.editaPrd)
+      self.btnProd.pack(side='top')
+      self.btnProd.place(anchor='nw' ,relx=0.35,rely=0.5)
+      
+      self.btnNueProd = ttk.Button(self.ventanaEd)
+      self.btnNueProd.config(text='Nuevo Producto',command=self.editaNPrd)
+      self.btnNueProd.pack(side='top')
+      self.btnNueProd.place(anchor='nw' ,relx=0.3,rely=0.7)
+    
+  def editaPrv(self):
     self.emptyidNit = self.idNit.get()
     self.emptyCodigo = self.codigo.get()
     self.codigo.configure(state='normal')
     self.limpiaProductos()
-    self.codigo.configure(state='disabled')
+    self.deshabilitaProductos()
+    self.habilitaProveedor() 
+    self.idNit.configure(state = 'readonly') 
+
+  def editaNPrv(self):
+    self.emptyidNit = self.idNit.get()
+    self.emptyCodigo = self.codigo.get()
+    self.codigo.configure(state='normal')
+    self.limpiaProductos()
+    self.deshabilitaProductos()
+    self.habilitaProveedor() 
+    self.idNit.configure(state = 'readonly') 
+
+  def editaPrd(self):
+    seleccion = self.treeProductos.focus()
+    self.values =self.treeProductos.item(seleccion)["values"]
+    if(len(seleccion)!=0):
+      self.habilitaProductos()
+      self.codigo.insert(0,self.values[0])
+      self.descripcion.insert(0,self.values[1]) 
+      self.unidad.insert(0,self.values[2])
+      self.cantidad.insert(0,self.values[3])
+      self.precio.insert(0,self.values[4])
+      self.fecha.insert(0,self.values[5])
+      self.codigo.configure(state='disabled')
+    else:
+      mssg.showerror(message='Seleccione un producto')
+      
+  def editaNPrd(self):
+    self.habilitaProductos()
+    self.nuevoProducto = True   
     
-    
+  def editaTP(self):
+    ''' Edita una tupla del TreeView despues de seleccionarla'''
+    #Para revisar si esta vacio el campo en grabar  
+    self.emptyidNit = self.idNit.get()
+    self.emptyCodigo = self.codigo.get()
+    self.codigo.configure(state='normal')
+    self.limpiaProductos()
+    self.codigo.configure(state='disabled')    
     if(mssg.askyesno(message='Desea editar el Proveedor?')==True):
       self.editaProveedor= True
     else:
       self.editaProveedor= False
-      self.deshabilitaProductos()
-      
-
+      self.deshabilitaProductos()    
     if(self.editaProveedor == True):
       self.habilitaProveedor() 
-      self.idNit.configure(state = 'readonly')   
-      
+      self.idNit.configure(state = 'readonly')       
     seleccion = self.treeProductos.focus()
     self.values =self.treeProductos.item(seleccion)["values"]
-    print(len(seleccion))
-    
+    print(len(seleccion))    
     if(len(seleccion)!=0):
       if(mssg.askyesno(message='Desea editar el producto?')==True):
         self.editaProducto = True
@@ -672,9 +773,7 @@ class Inventario:
         self.editaProducto=False
         self.deshabilitaProductos()
     else:
-      self.editaProducto= False
-      
-      
+      self.editaProducto= False  
     if(self.editaProducto==True):
       self.habilitaProductos()
       self.codigo.insert(0,self.values[0])
@@ -687,8 +786,7 @@ class Inventario:
       self.nuevoProducto = False
     elif(mssg.askyesno(message='Desea Agregar un producto?')==True):
       self.habilitaProductos()
-      self.nuevoProducto = True
-      
+      self.nuevoProducto = True      
     self.capturaComparacion()
 
 
@@ -700,6 +798,7 @@ class Inventario:
   #  pass
 
   def eliminaRegistro(self, event=None):
+    """Ventana emergente que perite seleccionar el tpo de eliminación que se requiera"""
 
     self.ventana1 = tk.Tk()
     self.seleccion = tk.IntVar(self.ventana1, 2)
@@ -717,6 +816,9 @@ class Inventario:
     self.label1.grid(column=0, row=3)
 
   def borrar(self):
+    """Modifica una tabla especifica de la base de datos eliminando un proveedor 
+    (y sus productos)
+      o producto seleccionado"""
 
     id_nit = self.idNit.get()
     if not id_nit:
@@ -748,12 +850,6 @@ class Inventario:
         mssg.showinfo('Éxito', 'Los productos del proveedor se han eliminado con éxito.')
   
   
-# #Voy a intentar crear una ventana para que se diga que quiere editar si PROVEEDOR PRODUCTO o PRODUCTO NUEVO 
-
-  
-  
-  
-  
   #Boton buscar  
   def buscarDB(self): 
     '''Consulta con Id o Nit del proveedor'''
@@ -780,7 +876,6 @@ class Inventario:
           self.ciudad.insert(0,row[2])
           self.razonSocial.configure(state='disabled')
           self.ciudad.configure(state='disabled')
-          self.nuevoProveedor = False 
           
           if(self.valEx_idNit(self.param) == True):
             query2 = '''SELECT * from Productos WHERE idNit = ? '''
@@ -815,8 +910,9 @@ class Inventario:
         mssg.showerror(title="Error",message="No hay IdNit para buscar")
     else:
       self.emptyCodigo = self.codigo.get()
-   
+    self.busqueda = True
     
 if __name__ == "__main__":
     app = Inventario()
     app.run()
+
