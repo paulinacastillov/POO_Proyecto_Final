@@ -630,6 +630,7 @@ class Inventario:
         self.treeProductos.delete(linea) # Límpia la filas del TreeView
     self.limpiaCampos()
     self.deshabilitaProductos()
+    self.busqueda=False
        
 #Boton grabar 
   def grabarDB(self):
@@ -711,6 +712,7 @@ class Inventario:
       self.btnNueProd.place(anchor='nw' ,relx=0.3,rely=0.7)
     
   def editaPrv(self):
+    '''Funcion de edicion del Proveedor'''
     self.emptyidNit = self.idNit.get()
     self.emptyCodigo = self.codigo.get()
     self.codigo.configure(state='normal')
@@ -718,8 +720,11 @@ class Inventario:
     self.deshabilitaProductos()
     self.habilitaProveedor() 
     self.idNit.configure(state = 'readonly') 
+    self.nuevoProveedor=False
+    self.ventanaEd.destroy()
 
   def editaNPrv(self):
+    '''Funcion de creacion de Proveedor'''
     self.emptyidNit = self.idNit.get()
     self.emptyCodigo = self.codigo.get()
     self.codigo.configure(state='normal')
@@ -727,8 +732,11 @@ class Inventario:
     self.deshabilitaProductos()
     self.habilitaProveedor() 
     self.idNit.configure(state = 'readonly') 
+    self.nuevoProveedor=True
+    self.ventanaEd.destroy()
 
   def editaPrd(self):
+    '''Funcion de edicion de Productos'''
     seleccion = self.treeProductos.focus()
     self.values =self.treeProductos.item(seleccion)["values"]
     if(len(seleccion)!=0):
@@ -740,12 +748,17 @@ class Inventario:
       self.precio.insert(0,self.values[4])
       self.fecha.insert(0,self.values[5])
       self.codigo.configure(state='disabled')
+      self.nuevoProducto=False
+      self.ventanaEd.destroy()
     else:
       mssg.showerror(message='Seleccione un producto')
+      self.ventanaEd.destroy()
       
   def editaNPrd(self):
+    '''Funcion de creacion de Productos'''
     self.habilitaProductos()
     self.nuevoProducto = True   
+    self.ventanaEd.destroy()
     
   def editaTP(self):
     ''' Edita una tupla del TreeView despues de seleccionarla'''
@@ -895,7 +908,8 @@ class Inventario:
               self.comparaPrecio = 0
               self.comparaFecha = 0
             else:
-              self.nuevoProducto = False    
+              self.nuevoProducto = False  
+                
         else:
           if(mssg.askyesno(title="Error", message="No existe el proveedor, desea crear uno?")== True):
             self.habilitaProveedor()
@@ -906,6 +920,7 @@ class Inventario:
             self.comparaCiudad = 0      
           else:
             self.idNit.delete(0,'end')
+            self.busqueda==False
       else:
         mssg.showerror(title="Error",message="No hay IdNit para buscar")
     else:
