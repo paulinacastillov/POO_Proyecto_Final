@@ -834,13 +834,13 @@ class Inventario:
       o producto seleccionado"""
 
     id_nit = self.idNit.get()
-    if not id_nit:
+
+    if (self.seleccion.get() == 1) and not id_nit:
         mssg.showerror('Error', 'Debes ingresar un ID/NIT de proveedor para eliminar.')
-        return
 
-    if (self.seleccion.get() == 1):
+    elif (self.seleccion.get() == 1) and id_nit:   
 
-
+      if (mssg.askyesno( message="Esta seguro que desea borrar este provedor y sus productos?")== True): 
         query_proveedor = "DELETE FROM Proveedores WHERE idNitProv = ?"
         self.run_Query(query_proveedor, (id_nit,))
         query_productos = "DELETE FROM Productos WHERE idNit = ?"
@@ -852,17 +852,19 @@ class Inventario:
 
 
     id_cod = self.codigo.get()
-    if not id_cod:
-        mssg.showerror('Error', 'Debes ingresar un codigo de proveedor para eliminar.')
-        return
+  
+    if (self.seleccion.get() == 2) and not id_cod:
+        mssg.showerror('Error', 'Debes seleccionar un producto para eliminar.')
+        seleccion = self.treeProductos.focus()
+        self.values =self.treeProductos.item(seleccion)["values"]
+        self.codigo.configure(state='enable')
 
-    if (self.seleccion.get() == 2):
+    elif (self.seleccion.get() == 2) and  id_cod:
+      if (mssg.askyesno( message="Esta seguro que desea borrar este producto?")== True):   
         query_productos2 = "DELETE FROM Productos WHERE Codigo = ?"
         self.treeProductos.delete(*self.treeProductos.get_children())
         self.run_Query(query_productos2, (id_cod,))
-        mssg.showinfo('Éxito', 'Los productos del proveedor se han eliminado con éxito.')
-  
-  
+        mssg.showinfo('Éxito', 'El producto del proveedor se ha eliminado con éxito.')
   #Boton buscar  
   def buscarDB(self): 
     '''Consulta con Id o Nit del proveedor'''
