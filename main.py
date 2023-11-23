@@ -504,9 +504,9 @@ class Inventario:
 
   def deshabilitaProveedor(self):
     """Deshabilita los campos de creación/edición de proovedores"""
-    self.idNit.configure('disabled')
-    self.razonSocial.configure('disabled')
-    self.ciudad.configure('disabled')
+    self.idNit.configure(state='disabled')
+    self.razonSocial.configure(state='disabled')
+    self.ciudad.configure(state='disabled')
     
   def capturaComparacion(self):
     """Almacena en variables los inputs almacenados en los campos de la interfas"""
@@ -670,7 +670,9 @@ class Inventario:
               self.nuevo_Producto()
               mssg.showinfo(title='Succes!',message='Se creo el nuevo producto correctamente')
               self.nuevoProducto==False
+              self.codigo.configure(state='disabled')
               self.actualizaTreeview()
+              
             else: 
               self.actualiza_Producto()
               mssg.showinfo(title='Sucsess',message='Se actualizo la informacion del Producto correctamente')
@@ -710,14 +712,15 @@ class Inventario:
       self.btnNueProd.config(text='Nuevo Producto',command=self.editaNPrd)
       self.btnNueProd.pack(side='top')
       self.btnNueProd.place(anchor='nw' ,relx=0.3,rely=0.7)
+      
+      self.emptyidNit = self.idNit.get()
+      self.emptyCodigo = self.codigo.get()
+      self.codigo.configure(state='normal')
+      self.limpiaProductos()
+      self.deshabilitaProductos()
     
   def editaPrv(self):
     '''Funcion de edicion del Proveedor'''
-    self.emptyidNit = self.idNit.get()
-    self.emptyCodigo = self.codigo.get()
-    self.codigo.configure(state='normal')
-    self.limpiaProductos()
-    self.deshabilitaProductos()
     self.habilitaProveedor() 
     self.idNit.configure(state = 'readonly') 
     self.nuevoProveedor=False
@@ -725,13 +728,12 @@ class Inventario:
 
   def editaNPrv(self):
     '''Funcion de creacion de Proveedor'''
-    self.emptyidNit = self.idNit.get()
-    self.emptyCodigo = self.codigo.get()
-    self.codigo.configure(state='normal')
-    self.limpiaProductos()
-    self.deshabilitaProductos()
     self.habilitaProveedor() 
-    self.idNit.configure(state = 'readonly') 
+    self.idNit.configure(state='normal')
+    self.limpiaCampos()
+    tabla_TreeView = self.treeProductos.get_children()
+    for linea in tabla_TreeView:
+        self.treeProductos.delete(linea)
     self.nuevoProveedor=True
     self.ventanaEd.destroy()
 
@@ -749,6 +751,7 @@ class Inventario:
       self.fecha.insert(0,self.values[5])
       self.codigo.configure(state='disabled')
       self.nuevoProducto=False
+      self.deshabilitaProveedor()
       self.ventanaEd.destroy()
     else:
       mssg.showerror(message='Seleccione un producto')
@@ -756,8 +759,11 @@ class Inventario:
       
   def editaNPrd(self):
     '''Funcion de creacion de Productos'''
+    self.habilitaProveedor()
+    self.limpiaProductos()
     self.habilitaProductos()
-    self.nuevoProducto = True   
+    self.nuevoProducto = True  
+    self.deshabilitaProveedor() 
     self.ventanaEd.destroy()
     
   def editaTP(self):
@@ -768,6 +774,8 @@ class Inventario:
     self.codigo.configure(state='normal')
     self.limpiaProductos()
     self.codigo.configure(state='disabled')    
+    
+    
     if(mssg.askyesno(message='Desea editar el Proveedor?')==True):
       self.editaProveedor= True
     else:
@@ -775,7 +783,8 @@ class Inventario:
       self.deshabilitaProductos()    
     if(self.editaProveedor == True):
       self.habilitaProveedor() 
-      self.idNit.configure(state = 'readonly')       
+      self.idNit.configure(state = 'readonly') 
+            
     seleccion = self.treeProductos.focus()
     self.values =self.treeProductos.item(seleccion)["values"]
     print(len(seleccion))    
