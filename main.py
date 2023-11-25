@@ -863,12 +863,13 @@ class Inventario:
         self.run_Query(query_proveedor, (id_nit,))
         query_productos = "DELETE FROM Productos WHERE idNit = ?"
         self.run_Query(query_productos, (id_nit,))
+        self.habilitaProveedor()
         self.limpiaCampos()
         self.deshabilitaProveedor()
         self.deshabilitaProductos()
         self.treeProductos.delete(*self.treeProductos.get_children())
-        self.cancelar()
         self.ventana1.destroy()
+        self.idNit.configure(state='normal')
         
         mssg.showinfo('Éxito', 'El proveedor y sus productos se han eliminado con éxito.')
 
@@ -886,8 +887,13 @@ class Inventario:
         query_productos2 = "DELETE FROM Productos WHERE Codigo = ?"
         self.treeProductos.delete(*self.treeProductos.get_children())
         self.run_Query(query_productos2, (id_cod,))
+        self.habilitaProductos()
+        self.habilitaProveedor()
         self.limpiaCampos()
+        self.deshabilitaProveedor()
+        self.deshabilitaProductos()
         self.ventana1.destroy()
+        self.idNit.configure(state='normal')
         
         mssg.showinfo('Éxito', 'El producto del proveedor se ha eliminado con éxito.')
   #Boton buscar  
