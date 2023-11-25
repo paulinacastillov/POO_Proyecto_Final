@@ -6,7 +6,7 @@ import tkinter.ttk as ttk
 from tkinter import messagebox as mssg
 import sqlite3
 import os
-from Funciones import *
+
 import datetime
 
 __pdoc__={}
@@ -23,6 +23,7 @@ class Inventario:
     #Define la dirección donde se almancena el proyecto
     self.path = os.path.abspath('')#r'X:/Users/ferna/Documents/UNal/Alumnos/2023_S2/ProyInventario'
     """@private""" #Esto sirve para que no salga en la documentación esta variable
+
     self.db_name = self.path + r'/bases_de_datos/Inventario.db'
     """@private"""
 
@@ -72,7 +73,7 @@ class Inventario:
     """@private"""
     self.idNit.configure(takefocus=True)
     self.idNit.place(anchor="nw", x=50, y=40)
-    self.idNit.bind("<Return>", self.validaIdNit)
+    self.idNit.bind("<Return>", self.validaIdNit) # que hace esto
     #self.idNit.bind("<Key>",self.id_valido)
     #self.idNit.bind("<BackSpace>", lambda event: self.idNit.delete("end"))
     
@@ -201,6 +202,8 @@ class Inventario:
 
     # Etiquetas de las columnas para el TreeView
     self.treeProductos["columns"]=("Codigo","Descripcion","Und","Cantidad","Precio","Fecha")
+
+
     # Características de las columnas del árbol
     self.treeProductos.column ("#0",          anchor="w",stretch=True,width=3)
     self.treeProductos.column ("Codigo",      anchor="w",stretch=True,width=3)
@@ -209,6 +212,7 @@ class Inventario:
     self.treeProductos.column ("Cantidad",    anchor="w",stretch=True,width=3)
     self.treeProductos.column ("Precio",      anchor="w",stretch=True,width=8)
     self.treeProductos.column ("Fecha",       anchor="w",stretch=True,width=3)
+
 
     # Etiquetas de columnas con los nombres que se mostrarán por cada columna
     self.treeProductos.heading("#0",          anchor="center", text='ID / Nit')
@@ -310,27 +314,21 @@ class Inventario:
  # Buscar como blanquear
   # Borra el último 
 
-  def validaIdNit(self):
-    """Valida que la longitud no sea mayor a 15 caracteres y que solo se inserten números."""
+  def validaIdNit(self,variable_fantasma=False):
+    """Valida que la longitud no sea mayor a 15 caracteres"""
     cadena = self.idNit.get()
     if len(cadena) > 14:
         self.idNit.delete(0, "end")  # Eliminar todo el contenido del campo
         mssg.showerror('Atención!!', 'El Id/NIT solo puede estar compuesto por 15 caracteres.')
-    elif not cadena.isdigit() and cadena:
-        # Buscar caracteres no válidos y eliminarlos
-        for char in cadena:
-            if not char.isdigit():
-                cadena = cadena.replace(char, "")
-        self.idNit.delete(0, "end")  # Eliminar todo el contenido del campo
-        mssg.showerror('Atención!!', 'El Id/NIT solo puede estar compuesto por números')
+    # elif not cadena.isdigit() and cadena:
+    #     # Buscar caracteres no válidos y eliminarlos
+    #     for char in cadena:
+    #         if not char.isdigit():
+    #             cadena = cadena.replace(char, "")
+    #     self.idNit.delete(0, "end")  # Eliminar todo el contenido del campo
+    #     mssg.showerror('Atención!!', 'El Id/NIT solo puede estar compuesto por números')
     else: return True
 
-
-# Hace falta conectarlo a los botones de busqueda o editar para que cuando se presionen
-# Muestre error. Preguntar a Diego
-
-# Este se puede usar para validad cantidad y precio porque basicamente es lo mismo, en caso contrario cambiar
-# a funciones separadass pero no lo veo necesario por ahora. Charlar
 
 #Validación de cantidad
   def validaCantidad(self):
@@ -432,21 +430,7 @@ class Inventario:
     except ValueError:
         mssg.showerror("Error", "La fecha es inválida.")
         
-        
- # def validaFecha(self):
-  #Valida que la longitud no sea mayor a 15 caracteres y que solo se inserten números. '''
-  #  cadena = self.idNit.get()
-
-   # if not datetime.datetime.strptime(cadena, "%d-%m-%y").is_valid():
-    #   mssg.showerror('Atención!', 'La fecha debe tener formato dd/mm/aaaa además de ser valida')
-
- # def id_valido(self, event):
- #       ''' Valida que solo se inserten números en el campo y muestra un mensaje de alerta en caso de caracteres inválidos '''
- #       caracteres = self.idNit.get()
- #       if not caracteres.isdigit():
- #           mssg.showerror('Atención!!', 'El Id/NIT solo puede estar compuesto por números.')
- #           self.idNit.delete(0, "end")  # Eliminar todo el contenido
-  
+   
 
   #Rutina de limpieza de datos
   def limpiaCampos(self):
@@ -521,14 +505,13 @@ class Inventario:
     
   # Operaciones con la base de datos
   def run_Query(self, query, parametros = ()):
-    
-  
     ''' Función para ejecutar los Querys a la base de datos '''
     with sqlite3.connect(self.db_name) as conn:
-        cursor = conn.cursor()
+        cursor = conn.cursor() # Que hace esto
         result = cursor.execute(query, parametros)
         conn.commit()
     return result
+  
   #Valida si el Proveedor existe 
   def valEx_idNitProv(self,busqueda):
     '''Revision si el idNitProv Insertado existe en la tabla proveedores, requiere el valor a buscar'''
@@ -542,6 +525,8 @@ class Inventario:
       return False
     else :
       return True
+    
+
   #Valida si existen productos de un proveedor dado
   def valEx_idNit(self,busqueda):
     '''Revision si el idNit Insertado existe en la tabla proveedores, requiere el valor a buscar'''
@@ -567,6 +552,7 @@ class Inventario:
     elif(self.comparaCiudad!=self.ciudad.get()):
       print('cambio en ciudad')
       return False
+    
    
   def cambioProductos(self):
     '''Valida los cambios en los campos del Producto, si hay cambios retorna False'''
@@ -855,15 +841,19 @@ class Inventario:
         query_productos = "DELETE FROM Productos WHERE idNit = ?"
         self.run_Query(query_productos, (id_nit,))
         self.limpiaCampos()
+        self.deshabilitaProveedor()
         self.deshabilitaProductos()
         self.treeProductos.delete(*self.treeProductos.get_children())
+        self.cancelar()
+        self.ventana1.destroy()
+        
         mssg.showinfo('Éxito', 'El proveedor y sus productos se han eliminado con éxito.')
 
 
     id_cod = self.codigo.get()
   
     if (self.seleccion.get() == 2) and not id_cod:
-        mssg.showerror('Error', 'Debes seleccionar un producto para eliminar.')
+        mssg.showerror('Error', 'Debes escribir un codigo de producto para eliminar.')
         seleccion = self.treeProductos.focus()
         self.values =self.treeProductos.item(seleccion)["values"]
         self.codigo.configure(state='enable')
@@ -873,6 +863,9 @@ class Inventario:
         query_productos2 = "DELETE FROM Productos WHERE Codigo = ?"
         self.treeProductos.delete(*self.treeProductos.get_children())
         self.run_Query(query_productos2, (id_cod,))
+        self.limpiaCampos()
+        self.ventana1.destroy()
+        
         mssg.showinfo('Éxito', 'El producto del proveedor se ha eliminado con éxito.')
   #Boton buscar  
   def buscarDB(self): 
