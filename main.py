@@ -28,6 +28,8 @@ class Inventario:
     """@private"""
 
     self.busqueda = False
+    self.ventaElimina = False
+    self.ventaEdita = False
     # Dimensiones de la pantalla
     # root = tk.Tk()
     # ancho=root.winfo_screenwidth()
@@ -623,6 +625,15 @@ class Inventario:
     self.limpiaCampos()
     self.deshabilitaProductos()
     self.busqueda=False
+    ####
+    if(self.ventaElimina==True):
+      self.ventana1.destroy()
+      self.ventaElimina=False
+    if(self.ventaEdita==True):   
+      self.ventanaEd.destroy()
+      self.ventaEdita=False
+      
+    
        
 #Boton grabar 
   def grabarDB(self):
@@ -664,6 +675,11 @@ class Inventario:
               self.nuevoProducto==False
               self.codigo.configure(state='disabled')
               self.actualizaTreeview()
+              
+              
+              
+              
+              
               
             else: 
               self.actualiza_Producto()
@@ -710,6 +726,8 @@ class Inventario:
       self.codigo.configure(state='normal')
       self.limpiaProductos()
       self.deshabilitaProductos()
+      
+      self.ventaEdita = True
     
   def editaPrv(self):
     '''Funcion de edicion del Proveedor'''
@@ -828,7 +846,8 @@ class Inventario:
     self.boton1.grid(column=0, row=2)
     self.label1 = tk.Label(self.ventana1, text="Opción seleccionada: ")
     self.label1.grid(column=0, row=3)
-
+    self.ventaElimina = True
+    
   def borrar(self):
     """Modifica una tabla especifica de la base de datos eliminando un proveedor 
     (y sus productos)
