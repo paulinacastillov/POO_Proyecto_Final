@@ -317,17 +317,23 @@ class Inventario:
   def validaIdNit(self,variable_fantasma=False):
     """Valida que la longitud no sea mayor a 15 caracteres"""
     cadena = self.idNit.get()
-    if len(cadena) > 14:
+    if not cadena:  # Verificar si el campo está vacío
+        mssg.showerror('Atención!!', 'El campo Id/NIT no puede estar vacío.')
+    elif len(cadena) > 14:
         self.idNit.delete(0, "end")  # Eliminar todo el contenido del campo
         mssg.showerror('Atención!!', 'El Id/NIT solo puede estar compuesto por 15 caracteres.')
-    # elif not cadena.isdigit() and cadena:
-    #     # Buscar caracteres no válidos y eliminarlos
-    #     for char in cadena:
-    #         if not char.isdigit():
-    #             cadena = cadena.replace(char, "")
-    #     self.idNit.delete(0, "end")  # Eliminar todo el contenido del campo
-    #     mssg.showerror('Atención!!', 'El Id/NIT solo puede estar compuesto por números')
-    else: return True
+    else:
+      return True
+
+  def validaCiudad(self): 
+    cadena= self.ciudad.get()
+    if not cadena:  # Verificar si el campo está vacío
+      mssg.showerror('Atención!!', 'La ciudad no puede estar vacía.')
+        
+  def validaRazon(self): 
+    cadena= self.razonSocial.get()
+    if not cadena:  # Verificar si el campo está vacío
+      mssg.showerror('Atención!!', 'La razón social no puede estar vacía.')  
 
 
 #Validación de cantidad
