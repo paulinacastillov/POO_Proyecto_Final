@@ -403,8 +403,6 @@ class Inventario:
 
 # #Valida Fecha
 #colocar que fecha no mayor a hoy
-# #Valida Fecha
-#colocar que fecha no mayor a hoy
   def validaFecha(self):
     fecha_str = self.fecha.get()
     
