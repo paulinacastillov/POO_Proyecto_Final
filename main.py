@@ -1,15 +1,23 @@
 # !/usr/bin/python3
 # -*- coding: utf-8 -*-
 #awa
+
+# Cosa grafica
 import tkinter as tk
+# Interfaces más lindas
 import tkinter.ttk as ttk
+# Muestra errores
 from tkinter import messagebox as mssg
+# Manejar base de datos
 import sqlite3
+# Dirección del archivo segúnm la computadora
 import os
+# #Para validación de fecha
+# import datetime
 
-import datetime
-
+# Diccionario para que la documentación corra (pdoc)
 __pdoc__={}
+
 
 class Inventario:
   """
@@ -19,14 +27,19 @@ class Inventario:
     productos de cada uno de estos. Permite además de visualizar esta base de datos, editarla
 
   """
+
+  #master = No hay clases padre
   def __init__(self, master=None):
+
     #Define la dirección donde se almancena el proyecto
-    self.path = os.path.abspath('')#r'X:/Users/ferna/Documents/UNal/Alumnos/2023_S2/ProyInventario'
+    self.path = os.path.abspath('')
     """@private""" #Esto sirve para que no salga en la documentación esta variable
 
+    # dirección de donde está la base de datos
     self.db_name = self.path + r'/bases_de_datos/Inventario.db'
     """@private"""
 
+    # Para el botón edita, da error si no está
     self.busqueda = False
     # Dimensiones de la pantalla
     # root = tk.Tk()
@@ -57,7 +70,7 @@ class Inventario:
     """@private"""
     self.tabs.configure(height=700, width=799)
 
-    #Frame de datos
+    #Frame de datos (parte de arriba)
     self.frm1 = ttk.Frame(self.tabs)
     """@private"""
     self.frm1.configure(height=200, width=200)
@@ -71,9 +84,12 @@ class Inventario:
     #Captura IdNit del Proveedor
     self.idNit = ttk.Entry(self.frm1)
     """@private"""
+    # 
     self.idNit.configure(takefocus=True)
     self.idNit.place(anchor="nw", x=50, y=40)
-    self.idNit.bind("<Return>", self.validaIdNit) # que hace esto
+
+    # Asigma que cuando se oprima el boton de borrar se corra lo de la dercha
+    self.idNit.bind("<Return>", self.validaIdNit) 
     #self.idNit.bind("<Key>",self.id_valido)
     #self.idNit.bind("<BackSpace>", lambda event: self.idNit.delete("end"))
     
@@ -180,7 +196,7 @@ class Inventario:
     self.fecha.configure(width=10,state= 'disabled')
     self.fecha.place(anchor="nw", x=390, y=170)
 
-    #Separador
+    #Separador entre campos y el treeview
     self.separador2 = ttk.Separator(self.frm1)
     """@private"""
     self.separador2.configure(orient="horizontal")
@@ -199,6 +215,7 @@ class Inventario:
     """@private"""
     
     self.treeProductos.configure(selectmode="extended")
+
 
     # Etiquetas de las columnas para el TreeView
     self.treeProductos["columns"]=("Codigo","Descripcion","Und","Cantidad","Precio","Fecha")
@@ -287,7 +304,7 @@ class Inventario:
     self.mainwindow = self.win
     """@private"""
 
-  #Fución de manejo de eventos del sistema
+  #Fución de manejo de eventos del sistema. Corre la ventana la interfaz
   def run(self):
       """Manejo de eventos del sistemas"""
       self.mainwindow.mainloop()
@@ -314,6 +331,7 @@ class Inventario:
  # Buscar como blanquear
   # Borra el último 
 
+  
   def validaIdNit(self,variable_fantasma=False):
     """Valida que la longitud no sea mayor a 15 caracteres"""
     cadena = self.idNit.get()
@@ -329,11 +347,14 @@ class Inventario:
     cadena= self.ciudad.get()
     if not cadena:  # Verificar si el campo está vacío
       mssg.showerror('Atención!!', 'La ciudad no puede estar vacía.')
+      self.errorCampos = True
+    
         
   def validaRazon(self): 
     cadena= self.razonSocial.get()
     if not cadena:  # Verificar si el campo está vacío
-      mssg.showerror('Atención!!', 'La razón social no puede estar vacía.')  
+      mssg.showerror('Atención!!', 'La razón social no puede estar vacía.') 
+      self.errorCampos = True 
 
 
 #Validación de cantidad
@@ -411,6 +432,7 @@ class Inventario:
         return
 
     try:
+        
         dia, mes, año = map(int, fecha_parts)
 
         # Verificar que el año tenga exactamente 4 dígitos
@@ -511,8 +533,10 @@ class Inventario:
   def run_Query(self, query, parametros = ()):
     ''' Función para ejecutar los Querys a la base de datos '''
     with sqlite3.connect(self.db_name) as conn:
-        cursor = conn.cursor() # Que hace esto
+        # conecta con la base de datos para edittarla
+        cursor = conn.cursor() 
         result = cursor.execute(query, parametros)
+        # Terminar el Query
         conn.commit()
     return result
   
@@ -611,6 +635,7 @@ class Inventario:
 #Boton cancelar
   def cancelar(self):
     """Limpia los campos y retorna la interfas a su estado inicial donde solo se busca por id de proveedor"""
+    #Habilita estos campos
     self.idNit.configure(state='normal')  
     self.codigo.configure(state='normal')
     self.habilitaProveedor()
@@ -627,6 +652,7 @@ class Inventario:
     '''Edita la base de datos según los campos de la interfas '''  
     #Proveedores--------------
     if(self.cambioProveedores()==False):
+      # pregunta ed confirmación si uno le da que sí, devuelve true
       if(mssg.askyesno(title='Grabar', message='Se realizaron cambios en el Proveedor, desea continuar?')==True):
         #Nuevo proveedor
         if(self.nuevoProveedor==True):
@@ -708,6 +734,9 @@ class Inventario:
       self.codigo.configure(state='normal')
       self.limpiaProductos()
       self.deshabilitaProductos()
+
+      
+      # acá es donde se puede cerrar la ventana
     
   def editaPrv(self):
     '''Funcion de edicion del Proveedor'''
@@ -858,6 +887,7 @@ class Inventario:
   
     if (self.seleccion.get() == 2) and not id_cod:
         mssg.showerror('Error', 'Debes escribir un codigo de producto para eliminar.')
+        # focus = selección click treeview
         seleccion = self.treeProductos.focus()
         self.values =self.treeProductos.item(seleccion)["values"]
         self.codigo.configure(state='enable')
