@@ -905,7 +905,6 @@ class Inventario:
  # Falta poner la ventana bonita, que esta se cierre con cancelar 
  # y cuando se cierre el programa,ademas poner el mensaje de error si no se ha puesto o seleccionado un producto o provedor.
   #  pass
-
   def eliminaRegistro(self, event=None):
     """Ventana emergente que perite seleccionar el tpo de eliminación que se requiera"""
 
@@ -924,6 +923,21 @@ class Inventario:
     self.label1 = tk.Label(self.ventana1, text="Opción seleccionada: ")
     self.label1.grid(column=0, row=3)
     self.ventaElimina = True
+
+
+    self.btnEliminar.config(state='disable')  # Deshabilitamos el botón
+
+    def on_close():  
+        '''
+        Función que se llama cuando se pulsa el botón de cierre
+        del gestor de ventanas 
+        '''        
+        self.ventana1.destroy()  # Destruimos la ventana secundaria
+        self.btnEliminar.config(state='normal')  # habilitamos el botón
+
+
+    self.ventana1.protocol("WM_DELETE_WINDOW", on_close) #Protocolo que se activa cuando se intenta cerrar la ventana
+
     
   def borrar(self):
     """Modifica una tabla especifica de la base de datos eliminando un proveedor 
@@ -951,7 +965,7 @@ class Inventario:
         self.idNit.configure(state='normal')
         
         mssg.showinfo('Éxito', 'El proveedor y sus productos se han eliminado con éxito.')
-
+        self.btnEliminar.config(state='enable')
 
     id_cod = self.codigo.get()
   
@@ -973,10 +987,9 @@ class Inventario:
         self.deshabilitaProveedor()
         self.deshabilitaProductos()
         self.ventana1.destroy()
-        self.idNit.configure(state='normal')
-        
+        self.idNit.configure(state='normal')    
         mssg.showinfo('Éxito', 'El producto del proveedor se ha eliminado con éxito.')
-  #Boton buscar  
+        self.btnEliminar.config(state='enable')#Boton buscar  
   def buscarDB(self): 
     '''Consulta con Id o Nit del proveedor'''
     #valida el idNit
