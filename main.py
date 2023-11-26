@@ -337,6 +337,17 @@ class Inventario:
     if not cadena:  # Verificar si el campo está vacío
       mssg.showerror('Atención!!', 'La razón social no puede estar vacía.')  
 
+  def validaProveedor(self):
+    cadena1= self.razonSocial.get()
+    cadena2= self.ciudad.get()
+    if len(self.idNit.get())!=0: 
+      if not cadena1 or not cadena2:
+        return True
+      else:
+        return
+    else:
+      return   
+
 
 #Validación de cantidad
   def validaCantidad(self):
@@ -350,6 +361,7 @@ class Inventario:
         # Error, no es un número double
         mssg.showerror('Atención!!', 'La cantidad es inválida')
         self.errorCampos=True
+        return
         # Limpia el campo
         #self.cantidad.delete(0, "end")
     
@@ -403,6 +415,7 @@ class Inventario:
 
 # #Valida Fecha
 #colocar que fecha no mayor a hoy
+
   def validaFecha(self):
     fecha_str = self.fecha.get()
     
@@ -410,7 +423,8 @@ class Inventario:
     fecha_parts = fecha_str.split('-')
     if len(fecha_parts) != 3:
         mssg.showerror("Error", "El formato de la fecha es incorrecto.")
-        return
+        self.errorCampos=True
+        
 
     try:
         dia, mes, año = map(int, fecha_parts)
@@ -418,12 +432,14 @@ class Inventario:
         # Verificar que el año tenga exactamente 4 dígitos
         if len(str(año)) != 4:
             mssg.showerror("Error", "La fecha es inválida. El año debe tener 4 dígitos.")
-            return
+            self.errorCampos=True
+            
 
         if not (1 <= mes <= 12):
             mssg.showerror("Error", "La fecha es inválida. Mes fuera de rango")
-            return
-
+            self.errorCampos=True  
+            
+                    
         if mes in [4, 6, 9, 11]:
             max_dia = 30
         elif mes == 2:
@@ -433,8 +449,11 @@ class Inventario:
 
         if not (1 <= dia <= max_dia):
             mssg.showerror("Error", "La fecha es inválida. Día no corresponde al mes")
+            self.errorCampos=True
+            
     except ValueError:
         mssg.showerror("Error", "La fecha es inválida.")
+        self.errorCampos=True
         
    
 
@@ -637,24 +656,28 @@ class Inventario:
   def grabarDB(self):
     '''Edita la base de datos según los campos de la interfas '''  
     #Proveedores--------------
-    if(self.cambioProveedores()==False):
-      if(mssg.askyesno(title='Grabar', message='Se realizaron cambios en el Proveedor, desea continuar?')==True):
+    if (self.validaProveedor()==True):
+      mssg.showerror('Atención!!', 'Los campos de proveedor no pueden estar vacíos.')
+    else:
+      if(self.cambioProveedores()==False):
+        if(mssg.askyesno(title='Grabar', message='Se realizaron cambios en el Proveedor, desea continuar?')==True):
         #Nuevo proveedor
-        if(self.nuevoProveedor==True):
-          self.nuevo_Proveedor()
-          mssg.showinfo(title='Sucsess',message='Se creo el nuevo proveedor correctamente') 
-          self.nuevoProveedor == False
-          self.capturaComparacion()
-          self.codigo.configure(state='disabled')
+          if(self.nuevoProveedor==True):
+            self.nuevo_Proveedor()
+            mssg.showinfo(title='Sucsess',message='Se creo el nuevo proveedor correctamente') 
+            self.nuevoProveedor == False
+            self.capturaComparacion()
+            self.codigo.configure(state='disabled')
+          else:
+          #Proveedor ya existente
+            self.actualiza_Proveedor()
+            mssg.showinfo(title='Sucsess',message='Se actualizo la informacion del Proveedor correctamente')
+            self.capturaComparacion()
         else:
-        #Proveedor ya existente
-          self.actualiza_Proveedor()
-          mssg.showinfo(title='Sucsess',message='Se actualizo la informacion del Proveedor correctamente')
-          self.capturaComparacion()
-      else:
-      #No desea continuar con los cambios
-        self.limpiaProveedor()
-    else: print('cambio proveedores true')
+        #No desea continuar con los cambios
+          self.limpiaProveedor()
+      else: print('cambio proveedores true')
+      pass
     
     #Productos--------------
     if(len(self.codigo.get())!=0):
@@ -686,7 +709,8 @@ class Inventario:
           else:
             self.limpiaProductos()
       else:   
-        mssg.showerror(title='Error',message='No se realizo el guardado de datos') 
+        mssg.showerror(title='Error',message='No se realizo el guardado de datos')
+        return 
     print('espacio codigo = 0')
 
 
@@ -954,6 +978,8 @@ class Inventario:
           else:
             self.idNit.delete(0,'end')
             self.busqueda==False
+            self.ciudad.configure(state= 'disabled')
+            self.razonSocial.configure(state= 'disabled')
       else:
         mssg.showerror(title="Error",message="No hay IdNit para buscar")
     else:
