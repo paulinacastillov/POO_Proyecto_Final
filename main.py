@@ -319,7 +319,8 @@ class Inventario:
     self.comparaPrecio = 0 
     self.comparaUnidad = 0
     self.errorCampos = False
-    self.nuevo_Proveedor = False
+    self.nuevoProveedor = False
+    
     
 
   #Fución de manejo de eventos del sistema. Corre la ventana la interfaz
@@ -380,12 +381,13 @@ class Inventario:
     try:
         valor = float(cadena)
         #self.errorCampos=False
+        return False
         # Validación exitosa, es un número double
     except ValueError:
         # Error, no es un número double
         mssg.showerror('Atención!!', 'La cantidad es inválida')
-        self.errorCampos=True
-        return
+        self.errorCampos = True
+        return True
         # Limpia el campo
         #self.cantidad.delete(0, "end")
     
@@ -399,11 +401,13 @@ class Inventario:
     try:
         valor = float(cadena)
         #self.errorCampos=False
+        return False
         # Validación exitosa, es un número double
     except ValueError:
         # Error, no es un número double
         mssg.showerror('Atención!!', 'El precio es inválido')
         self.errorCampos=True
+        return True
         #self.errorCampos=True
         # Limpia el campo
         #self.precio.delete(0, "end")
@@ -417,13 +421,16 @@ class Inventario:
         mssg.showerror('Error', 'El campo de unidad no puede estar vacío o contener solo espacios en blanco')
         self.unidad.delete(0,"end")
         self.errorCampos=True
+        return True
         #self.unidad.delete(0,"end")
     elif len(cadena) > 10:
         mssg.showerror('Error', 'El campo de unidad no puede superar los 10 caracteres')
         self.unidad.delete(0,"end")
         self.errorCampos=True
+        return True
     else: 
       #self.errorCampos=False
+      return False
       pass
 
 #Validar Descripción        
@@ -434,8 +441,11 @@ class Inventario:
         mssg.showerror('Error', 'El campo de descripción no puede estar vacío o contener solo espacios en blanco')
         self.errorCampos=True
         self.descripcion.delete(0,"end")
+        return True
+        
     else: 
       #self.errorCampos=False
+      return False
       pass
       
 
@@ -445,11 +455,14 @@ class Inventario:
   def validaFecha(self):
     fecha_str = self.fecha.get()
     
+    
     # Verificar el formato de la fecha (dd-mm-aaaa)
     fecha_parts = fecha_str.split('-')
     if len(fecha_parts) != 3:
         mssg.showerror("Error", "El formato de la fecha es incorrecto.")
         self.errorCampos=True
+        return True
+        
         
 
     try:
@@ -460,11 +473,13 @@ class Inventario:
         if len(str(año)) != 4:
             mssg.showerror("Error", "La fecha es inválida. El año debe tener 4 dígitos.")
             self.errorCampos=True
+            return True
             
 
         if not (1 <= mes <= 12):
             mssg.showerror("Error", "La fecha es inválida. Mes fuera de rango")
-            self.errorCampos=True  
+            self.errorCampos=True 
+            return True
             
                     
         if mes in [4, 6, 9, 11]:
@@ -477,10 +492,13 @@ class Inventario:
         if not (1 <= dia <= max_dia):
             mssg.showerror("Error", "La fecha es inválida. Día no corresponde al mes")
             self.errorCampos=True
+            return True
             
     except ValueError:
         mssg.showerror("Error", "La fecha es inválida.")
         self.errorCampos=True
+        return True
+    
         
    
 
@@ -708,8 +726,13 @@ class Inventario:
         else:
         #No desea continuar con los cambios
           self.limpiaProveedor()
-      else: print('cambio proveedores true')
-      pass
+      else: 
+        print('cambio proveedores true')
+
+      
+   
+
+      
   def grabaProdutos (self):  
     #Productos--------------
     if(len(self.codigo.get())!=0):
@@ -719,7 +742,13 @@ class Inventario:
       self.validaUnidad()
       self.validaDescripcion()
       self.validaFecha()  
-      if(self.errorCampos==False):        
+      #if(self.errorCampos==False):   
+      if(not self.validaCantidad() and 
+         not self.validaPrecio() and
+         not self.validaUnidad() and
+         not self.validaDescripcion() and not 
+         self.validaFecha()  
+         ):      
         if(self.cambioProductos()==False):
           if(mssg.askyesno(title='Grabar', message='Se realizaron cambios en el Producto, desea continuar?')==True): 
             if(self.nuevoProducto==True):
@@ -728,17 +757,13 @@ class Inventario:
               self.nuevoProducto==False
               self.codigo.configure(state='disabled')
               self.actualizaTreeview()
-              
-              
-              
-              
-              
-              
+               
             else: 
               self.actualiza_Producto()
               mssg.showinfo(title='Sucsess',message='Se actualizo la informacion del Producto correctamente')
               self.actualizaTreeview()
           else:
+            self.habilitaProductos()
             self.limpiaProductos()
       else:   
         mssg.showerror(title='Error',message='No se realizo el guardado de datos')
