@@ -805,6 +805,18 @@ class Inventario:
       self.deshabilitaProductos()
       
       self.ventaEdita = True
+      self.btnEditar.config(state='disable')  # Deshabilitamos el botón
+
+    def on_close():  
+        '''
+        Función que se llama cuando se pulsa el botón de cierre
+        del gestor de ventanas 
+        '''        
+        self.ventanaEd.destroy()  # Destruimos la ventana secundaria
+        self.btnEditar.config(state='normal')  # habilitamos el botón
+
+
+    self.ventanaEd.protocol("WM_DELETE_WINDOW", on_close) #Protocolo que se activa cuando se intenta cerrar la ventana
     
   def editaPrv(self):
     '''Funcion de edicion del Proveedor'''
@@ -812,6 +824,7 @@ class Inventario:
     self.idNit.configure(state = 'readonly') 
     self.nuevoProveedor=False
     self.ventanaEd.destroy()
+    self.btnEditar.config(state='enable')
 
   def editaNPrv(self):
     '''Funcion de creacion de Proveedor'''
@@ -823,6 +836,7 @@ class Inventario:
         self.treeProductos.delete(linea)
     self.nuevoProveedor=True
     self.ventanaEd.destroy()
+    self.btnEditar.config(state='enable')
 
   def editaPrd(self):
     '''Funcion de edicion de Productos'''
@@ -840,9 +854,11 @@ class Inventario:
       self.nuevoProducto=False
       self.deshabilitaProveedor()
       self.ventanaEd.destroy()
+      self.btnEditar.config(state='enable')
     else:
       mssg.showerror(message='Seleccione un producto')
       self.ventanaEd.destroy()
+      self.btnEditar.config(state='enable')
       
   def editaNPrd(self):
     '''Funcion de creacion de Productos'''
@@ -852,6 +868,7 @@ class Inventario:
     self.nuevoProducto = True  
     self.deshabilitaProveedor() 
     self.ventanaEd.destroy()
+    self.btnEditar.config(state='enable')
     
   def editaTP(self):
     ''' Edita una tupla del TreeView despues de seleccionarla'''
@@ -860,7 +877,8 @@ class Inventario:
     self.emptyCodigo = self.codigo.get()
     self.codigo.configure(state='normal')
     self.limpiaProductos()
-    self.codigo.configure(state='disabled')    
+    self.codigo.configure(state='disabled')  
+    self.btnEditar.config(state='enable')  
     
     
     if(mssg.askyesno(message='Desea editar el Proveedor?')==True):
