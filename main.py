@@ -19,6 +19,8 @@ import os
 __pdoc__={}
 
 
+
+
 class Inventario:
   """
     Esta clase es el corazón de la app de inventario y proveedor
@@ -306,6 +308,20 @@ class Inventario:
     self.mainwindow = self.win
     """@private"""
 
+
+    #Variables
+    self.comparaRazonSocial = 0
+    self.comparaCiudad = 0
+    self.comparaDescripcion = 0
+    self.comparaCantidad = 0
+    self.comparaFecha = 0
+    self.comparaIdNit = 0
+    self.comparaPrecio = 0 
+    self.comparaUnidad = 0
+    self.errorCampos = False
+    self.nuevo_Proveedor = False
+    
+
   #Fución de manejo de eventos del sistema. Corre la ventana la interfaz
   def run(self):
       """Manejo de eventos del sistemas"""
@@ -363,7 +379,7 @@ class Inventario:
     cadena = self.cantidad.get()
     try:
         valor = float(cadena)
-        self.errorCampos=False
+        #self.errorCampos=False
         # Validación exitosa, es un número double
     except ValueError:
         # Error, no es un número double
@@ -382,7 +398,7 @@ class Inventario:
     cadena = self.precio.get()
     try:
         valor = float(cadena)
-        self.errorCampos=False
+        #self.errorCampos=False
         # Validación exitosa, es un número double
     except ValueError:
         # Error, no es un número double
@@ -407,7 +423,8 @@ class Inventario:
         self.unidad.delete(0,"end")
         self.errorCampos=True
     else: 
-      self.errorCampos=False
+      #self.errorCampos=False
+      pass
 
 #Validar Descripción        
   def validaDescripcion(self):
@@ -418,7 +435,8 @@ class Inventario:
         self.errorCampos=True
         self.descripcion.delete(0,"end")
     else: 
-      self.errorCampos=False
+      #self.errorCampos=False
+      pass
       
 
 # #Valida Fecha
@@ -527,7 +545,7 @@ class Inventario:
     self.ciudad.configure(state='disabled')
     
   def capturaComparacion(self):
-    """Almacena en variables los inputs almacenados en los campos de la interfas"""
+    """Almacena en variables los inputs almacenados en los campos de la interfaz"""
     self.comparaRazonSocial = self.razonSocial.get()
     self.comparaCiudad = self.ciudad.get()
     self.comparaDescripcion = self.descripcion.get()
@@ -642,7 +660,7 @@ class Inventario:
   # Funciones de botones
 #Boton cancelar
   def cancelar(self):
-    """Limpia los campos y retorna la interfas a su estado inicial donde solo se busca por id de proveedor"""
+    """Limpia los campos y retorna la interfaz a su estado inicial donde solo se busca por id de proveedor"""
     #Habilita estos campos
     self.idNit.configure(state='normal')  
     self.codigo.configure(state='normal')
@@ -666,7 +684,7 @@ class Inventario:
        
 #Boton grabar 
   def grabarDB(self):
-    '''Edita la base de datos según los campos de la interfas '''  
+    '''Edita la base de datos según los campos de la interfaz '''  
     #Proveedores--------------
     if (self.validaProveedor()==True):
       mssg.showerror('Atención!!', 'Los campos de proveedor no pueden estar vacíos.')
