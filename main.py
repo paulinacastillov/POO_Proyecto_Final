@@ -275,7 +275,7 @@ class Inventario:
     # Botón para Guardar los datos
     self.btnGrabar = ttk.Button(self.frm2)
     """@private"""
-    self.btnGrabar.configure(text='Grabar',command=lambda: ( self.grabaProdutos(),self.grabarDB()))
+    self.btnGrabar.configure(text='Grabar',command=lambda: ( self.grabarDB(), self.grabaProdutos()))
     self.btnGrabar.pack(side="bottom")
     self.btnGrabar.place(anchor="nw", width=70, x=210, y=10)
 
@@ -706,8 +706,6 @@ class Inventario:
     #Proveedores--------------
     if (self.validaProveedor()==True):
       mssg.showerror('Atención!!', 'Los campos de proveedor no pueden estar vacíos.')
-      self.ciudad.delete(0, "end")  # Eliminar todo el contenido del campo
-      self.razonSocial.delete(0, "end")  # Eliminar todo el contenido del campo
     else:
       if(self.cambioProveedores()==False):
         if(mssg.askyesno(title='Grabar', message='Se realizaron cambios en el Proveedor, desea continuar?')==True):
