@@ -256,7 +256,7 @@ class Inventario:
     # Botón para Guardar los datos
     self.btnGrabar = ttk.Button(self.frm2)
     """@private"""
-    self.btnGrabar.configure(text='Grabar',command=lambda: (self.grabarDB()))
+    self.btnGrabar.configure(text='Grabar',command=lambda: ( self.grabaProdutos(),self.grabarDB()))
     self.btnGrabar.pack(side="bottom")
     self.btnGrabar.place(anchor="nw", width=70, x=210, y=10)
 
@@ -316,30 +316,21 @@ class Inventario:
  # Buscar como blanquear
   # Borra el último 
 
-  def validaIdNit(self,variable_fantasma=False):
-    """Valida que la longitud no sea mayor a 15 caracteres"""
-    cadena = self.idNit.get()
-    if not cadena:  # Verificar si el campo está vacío
+  def validaIdNit(self, variable_fantasma=False):
+    """Valida que la longitud no sea mayor a 15 caracteres y que no esté compuesta solo por espacios"""
+    cadena = self.idNit.get().strip()  # Elimina los espacios en blanco al inicio y al final de la cadena
+    if not cadena:  # Verificar si el campo está vacío o compuesto solo por espacios
         mssg.showerror('Atención!!', 'El campo Id/NIT no puede estar vacío.')
-    elif len(cadena) > 14:
         self.idNit.delete(0, "end")  # Eliminar todo el contenido del campo
-        mssg.showerror('Atención!!', 'El Id/NIT solo puede estar compuesto por 15 caracteres.')
+    elif len(cadena) > 15:
+        self.idNit.delete(0, "end")  # Eliminar todo el contenido del campo
+        mssg.showerror('Atención!!', 'El Id/NIT solo puede tener hasta 15 caracteres.')
     else:
-      return True
-
-  def validaCiudad(self): 
-    cadena= self.ciudad.get()
-    if not cadena:  # Verificar si el campo está vacío
-      mssg.showerror('Atención!!', 'La ciudad no puede estar vacía.')
-        
-  def validaRazon(self): 
-    cadena= self.razonSocial.get()
-    if not cadena:  # Verificar si el campo está vacío
-      mssg.showerror('Atención!!', 'La razón social no puede estar vacía.')  
+        return True 
 
   def validaProveedor(self):
-    cadena1= self.razonSocial.get()
-    cadena2= self.ciudad.get()
+    cadena1= self.razonSocial.get().strip()
+    cadena2= self.ciudad.get().strip()
     if len(self.idNit.get())!=0: 
       if not cadena1 or not cadena2:
         return True
@@ -658,6 +649,8 @@ class Inventario:
     #Proveedores--------------
     if (self.validaProveedor()==True):
       mssg.showerror('Atención!!', 'Los campos de proveedor no pueden estar vacíos.')
+      self.ciudad.delete(0, "end")  # Eliminar todo el contenido del campo
+      self.razonSocial.delete(0, "end")  # Eliminar todo el contenido del campo
     else:
       if(self.cambioProveedores()==False):
         if(mssg.askyesno(title='Grabar', message='Se realizaron cambios en el Proveedor, desea continuar?')==True):
@@ -678,7 +671,7 @@ class Inventario:
           self.limpiaProveedor()
       else: print('cambio proveedores true')
       pass
-    
+  def grabaProdutos (self):  
     #Productos--------------
     if(len(self.codigo.get())!=0):
       #Validaciones de Campos Productos
