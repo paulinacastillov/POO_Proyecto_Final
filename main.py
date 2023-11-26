@@ -737,11 +737,11 @@ class Inventario:
     #Productos--------------
     if(len(self.codigo.get())!=0):
       #Validaciones de Campos Productos
-      self.validaCantidad()
-      self.validaPrecio()
-      self.validaUnidad()
-      self.validaDescripcion()
-      self.validaFecha()  
+      # self.validaCantidad()
+      # self.validaPrecio()
+      # self.validaUnidad()
+      # self.validaDescripcion()
+      # self.validaFecha()  
       #if(self.errorCampos==False):   
       if(not self.validaCantidad() and 
          not self.validaPrecio() and
