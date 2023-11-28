@@ -43,8 +43,11 @@ class Inventario:
 
     # Para el botón edita, da error si no está
     self.busqueda = False
+    """@private"""
     self.ventaElimina = False
+    """@private"""
     self.ventaEdita = False
+    """@private"""
     # Dimensiones de la pantalla
     # root = tk.Tk()
     # ancho=root.winfo_screenwidth()
@@ -59,7 +62,7 @@ class Inventario:
     self.win = tk.Tk()
     """@private"""
     self.win.geometry(f"{int(ancho/30)}x{int(alto/30)}")
-#    self.win.iconbitmap(self.path + r'/imagenes/dt.ico')
+    self.win.iconbitmap(self.path + r'/imagenes/dt.ico')
     self.win.resizable(True, True)
     self.win.title("Manejo de Proveedores") 
 
@@ -309,17 +312,28 @@ class Inventario:
     """@private"""
 
 
-    #Variables
+    # Variables usadas en las funciones posteriores
+    # su nombre intuye cual es su función
     self.comparaRazonSocial = 0
+    """@private"""
     self.comparaCiudad = 0
+    """@private"""
     self.comparaDescripcion = 0
+    """@private"""
     self.comparaCantidad = 0
+    """@private"""
     self.comparaFecha = 0
+    """@private"""
     self.comparaIdNit = 0
+    """@private"""
     self.comparaPrecio = 0 
+    """@private"""
     self.comparaUnidad = 0
+    """@private"""
     self.errorCampos = False
+    """@private"""
     self.nuevoProveedor = False
+    """@private"""
     
 
   #Fución de manejo de eventos del sistema. Corre la ventana la interfaz
