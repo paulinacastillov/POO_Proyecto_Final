@@ -50,7 +50,7 @@ class Inventario:
     # ancho=root.winfo_screenwidth()
     # alto=root.winfo_screenheight() 
     # root.destroy()
-    ancho=700
+    ancho=800
     alto=800
 
     Inventario.actualiza = None
@@ -321,12 +321,22 @@ class Inventario:
     self.errorCampos = False
     self.nuevoProveedor = False
     
-    
 
   #Fución de manejo de eventos del sistema. Corre la ventana la interfaz
   def run(self):
       """Manejo de eventos del sistemas"""
-      self.mainwindow.mainloop()
+      #QUERY DE VERIFICACION DE TABLAS
+      query1= '''SELECT name FROM sqlite_master WHERE type='table' AND name ='Proveedores' '''
+      query2= '''SELECT name FROM sqlite_master WHERE type='table' AND name ='Productos' '''   
+      if(len(list(self.run_Query(query1)))!=0 ):
+        if(len(list(self.run_Query(query2)))!=0):
+          self.mainwindow.mainloop()
+        else: 
+          mssg.showerror(title='Pedazo de pedazo', message= 'No existe la Tabla Productos, Asegurese de usar una base de datos compatible')
+      else:
+        mssg.showerror(title='Tarupido', message= 'No existe la Tabla Proveedores, Asegurese de usar una base de datos compatible')
+      
+      
 
   ''' ......... Métodos utilitarios del sistema .............'''
   #Rutina de centrado de pantalla
@@ -684,9 +694,14 @@ class Inventario:
   
   def nuevo_Producto(self):
     """Inserta en la tabla Productos un nuevo valor"""
-    query = '''INSERT INTO Productos VALUES(?,?,?,?,?,?,?)'''
-    param= [self.idNit.get(),self.codigo.get(),self.descripcion.get(),self.unidad.get(),self.cantidad.get(),self.precio.get(),self.fecha.get()]
-    self.run_Query(query,param) 
+    if(self.duplicadosProducto()==False):
+      query = '''INSERT INTO Productos VALUES(?,?,?,?,?,?,?)'''
+      param= [self.idNit.get(),self.codigo.get(),self.descripcion.get(),self.unidad.get(),self.cantidad.get(),self.precio.get(),self.fecha.get()]
+      self.run_Query(query,param) 
+      mssg.showinfo(title='Succes!',message='Se creo el nuevo producto correctamente')
+      
+    else:
+      mssg.showerror(title='Error',message='No se relizo el guardado de datos')
   
   def actualizaTreeview(self):
     """Actualiza la información mostrada en los campos posterior a una acción de creación o modificación"""
@@ -771,14 +786,13 @@ class Inventario:
          not self.validaUnidad() and
          not self.validaCantidad() and
          not self.validaPrecio() and 
-         not self.validaFecha() and 
-         not self.duplicadosProducto()
+         not self.validaFecha()
          ):      
         if(self.cambioProductos()==False):
           if(mssg.askyesno(title='Grabar', message='Se realizaron cambios en el Producto, desea continuar?')==True): 
             if(self.nuevoProducto==True):
               self.nuevo_Producto()
-              mssg.showinfo(title='Succes!',message='Se creo el nuevo producto correctamente')
+              #mssg.showinfo(title='Succes!',message='Se creo el nuevo producto correctamente')
               self.nuevoProducto==False
               self.codigo.configure(state='readonly')
               self.actualizaTreeview()
